@@ -35,10 +35,11 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
         :raises requests.HTTPError: If the Frontegg API responds with an HTTP error code, this exception is raised.
         """
 
+        host = request.host
         requestJson = None
         if (request.is_json == True and request.data != b''):
             requestJson = request.json
-        return self.request(endpoint, request.method, json=requestJson, params=request.args)
+        return self.request(endpoint, request.method, json=requestJson, params=request.args, host)
 
 
 class Frontegg(AuditsClientMixin):
