@@ -1,0 +1,105 @@
+interactions:
+  - request:
+      body: clientId=my-client-id&secret=my-api-key
+      headers:
+        Accept:
+          - '*/*'
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        Content-Length:
+          - '63'
+        Content-Type:
+          - application/x-www-form-urlencoded
+        User-Agent:
+          - python-requests/2.22.0
+      method: POST
+      uri: https://api.frontegg.com/vendors/auth/token
+    response:
+      body:
+        string: '{"token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3JJZCI6IjJmYjgzNWQwLThmMTctNDhjYi04NDg5LTNhMmY4ZjUwY2U0YSIsInNjb3BlcyI6WyJhdWRpdHM6YWRkIiwiYXVkaXRzOmdldCIsInRlYW06Z2V0IiwidGVhbTphZGQiLCJ0ZWFtOmRlbGV0ZSIsInRlYW06dXBkYXRlIl0sInR5cGUiOiJ2ZW5kb3IiLCJpYXQiOjE1Nzg4NjYwMjIsImV4cCI6MTU3ODg2NzgyMn0.MAnjCVl2ioXRpBoBA4ivo2ZGdVaaLAF8gaco0BtJQZ3i8KBWDbYNbo17KXVFlc3ad86aTNPl2qrooz8hxniyW-L8_dV8xSRpRjsSkmu8Hnsj4Pl4GmhN7k66oRP89QrsLkE_ALYJTsJNDPHQsaOylPpr7x-pr75tq5-Om4DBPdE8Z30d0gZUsSh1NR7xOMae0gJVT6My4OXqmd73-GSwL4OyYMozu2w707cdJPea70ABuO-OquLH37ldrQmHwi43RuDwQ5ffKZqLag-BGio0DRRyF31Up3VQxikZBQb0ZU6QwvfJ3GT76VznOMX_DtMvLXnotZgOyLO6lAWWGYLevQ","expiresIn":1800}'
+      headers:
+        Access-Control-Allow-Credentials:
+          - 'true'
+        Content-Length:
+          - '660'
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Sun, 12 Jan 2020 21:53:41 GMT
+        ETag:
+          - W/"294-v/7+HagmaSKLhY0nUDj46g+Prv0"
+        access-control-allow-origin:
+          - '*'
+        strict-transport-security:
+          - max-age=15552000; includeSubDomains
+        x-content-type-options:
+          - nosniff
+        x-dns-prefetch-control:
+          - 'off'
+        x-download-options:
+          - noopen
+        x-frame-options:
+          - SAMEORIGIN
+        x-xss-protection:
+          - 1; mode=block
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: username=test&severity=Info
+      headers:
+        Accept:
+          - '*/*'
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        Content-Length:
+          - '27'
+        Content-Type:
+          - application/x-www-form-urlencoded
+        User-Agent:
+          - python-requests/2.22.0
+        frontegg-tenant-id:
+          - my-tenant-id
+        frontegg-user-id:
+          - ee@ee.eee
+        x-access-token:
+          - eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3JJZCI6IjJmYjgzNWQwLThmMTctNDhjYi04NDg5LTNhMmY4ZjUwY2U0YSIsInNjb3BlcyI6WyJhdWRpdHM6YWRkIiwiYXVkaXRzOmdldCIsInRlYW06Z2V0IiwidGVhbTphZGQiLCJ0ZWFtOmRlbGV0ZSIsInRlYW06dXBkYXRlIl0sInR5cGUiOiJ2ZW5kb3IiLCJpYXQiOjE1Nzg4NjYwMjIsImV4cCI6MTU3ODg2NzgyMn0.MAnjCVl2ioXRpBoBA4ivo2ZGdVaaLAF8gaco0BtJQZ3i8KBWDbYNbo17KXVFlc3ad86aTNPl2qrooz8hxniyW-L8_dV8xSRpRjsSkmu8Hnsj4Pl4GmhN7k66oRP89QrsLkE_ALYJTsJNDPHQsaOylPpr7x-pr75tq5-Om4DBPdE8Z30d0gZUsSh1NR7xOMae0gJVT6My4OXqmd73-GSwL4OyYMozu2w707cdJPea70ABuO-OquLH37ldrQmHwi43RuDwQ5ffKZqLag-BGio0DRRyF31Up3VQxikZBQb0ZU6QwvfJ3GT76VznOMX_DtMvLXnotZgOyLO6lAWWGYLevQ
+      method: POST
+      uri: https://api.frontegg.com/audits
+    response:
+      body:
+        string: '{"username":"test","severity":"Info","vendorId":"my-client-id","tenantId":"my-tenant-id","createdAt":"2020-01-12
+        21:53:42.941"}'
+      headers:
+        Access-Control-Allow-Credentials:
+          - 'true'
+        Content-Length:
+          - '151'
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Sun, 12 Jan 2020 21:53:42 GMT
+        ETag:
+          - W/"97-c/LOVxAqGL3EQBUAktWQo27SMco"
+        access-control-allow-origin:
+          - '*'
+        strict-transport-security:
+          - max-age=15552000; includeSubDomains
+        x-content-type-options:
+          - nosniff
+        x-dns-prefetch-control:
+          - 'off'
+        x-download-options:
+          - noopen
+        x-frame-options:
+          - SAMEORIGIN
+        x-xss-protection:
+          - 1; mode=block
+      status:
+        code: 201
+        message: Created
+version: 1

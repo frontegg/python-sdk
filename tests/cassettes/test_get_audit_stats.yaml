@@ -1,0 +1,98 @@
+interactions:
+  - request:
+      body: clientId=the-client-id&secret=my-api-key
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        Content-Length:
+          - "63"
+        Content-Type:
+          - application/x-www-form-urlencoded
+        User-Agent:
+          - python-requests/2.22.0
+      method: POST
+      uri: https://api.frontegg.com/auth/vendor
+    response:
+      body:
+        string: '{"token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3JJZCI6IjJmYjgzNWQwLThmMTctNDhjYi04NDg5LTNhMmY4ZjUwY2U0YSIsInNjb3BlcyI6WyJhdWRpdHM6YWRkIiwiYXVkaXRzOmdldCIsInRlYW06Z2V0IiwidGVhbTphZGQiLCJ0ZWFtOmRlbGV0ZSIsInRlYW06dXBkYXRlIl0sInR5cGUiOiJ2ZW5kb3IiLCJpYXQiOjE1Nzg5MDYwNDQsImV4cCI6MTU3ODkwNzg0NH0.FBa6D0qN0ZFdAddFZuC0iJE36QHXqorRVjWvfQXJDB5lbkC1NpqY23ENafxnCHnHQKgHClgiJr1QrpGG1FLl1pB-wl266q4nQZ3LgjVMZMROxCAMpHRQbsPe0cAsqmE0VhYm__G8WchLHyQCIDev_iXCpkIxTfVPxOhioOY7kQ8fboMT1XDNyZqMYlBXxauPfGf3YOXM4FXmv5HlNAoqVExw3KEyhNHwBt9EUfYTiXNDONNg5A5R0hTa_T_UvkWSAKtIJH-uFEgKByG80ROiNIQqwS4kWMipo_-Nt6r0Q4yPL_7NtsMuPPLeSZ5ZgzzIdR9PDitSPzukrQhdX4nDDQ","expiresIn":1800}'
+      headers:
+        Access-Control-Allow-Credentials:
+          - "true"
+        Content-Length:
+          - "660"
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Mon, 13 Jan 2020 09:00:44 GMT
+        ETag:
+          - W/"294-Sjaf9scy74E1yJtYnHQmDIUyVoY"
+        access-control-allow-origin:
+          - "*"
+        strict-transport-security:
+          - max-age=15552000; includeSubDomains
+        x-content-type-options:
+          - nosniff
+        x-dns-prefetch-control:
+          - "off"
+        x-download-options:
+          - noopen
+        x-frame-options:
+          - SAMEORIGIN
+        x-xss-protection:
+          - 1; mode=block
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - "*/*"
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.22.0
+        frontegg-tenant-id:
+          - my-tenant-id
+        x-access-token:
+          - eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3JJZCI6IjJmYjgzNWQwLThmMTctNDhjYi04NDg5LTNhMmY4ZjUwY2U0YSIsInNjb3BlcyI6WyJhdWRpdHM6YWRkIiwiYXVkaXRzOmdldCIsInRlYW06Z2V0IiwidGVhbTphZGQiLCJ0ZWFtOmRlbGV0ZSIsInRlYW06dXBkYXRlIl0sInR5cGUiOiJ2ZW5kb3IiLCJpYXQiOjE1Nzg5MDYwNDQsImV4cCI6MTU3ODkwNzg0NH0.FBa6D0qN0ZFdAddFZuC0iJE36QHXqorRVjWvfQXJDB5lbkC1NpqY23ENafxnCHnHQKgHClgiJr1QrpGG1FLl1pB-wl266q4nQZ3LgjVMZMROxCAMpHRQbsPe0cAsqmE0VhYm__G8WchLHyQCIDev_iXCpkIxTfVPxOhioOY7kQ8fboMT1XDNyZqMYlBXxauPfGf3YOXM4FXmv5HlNAoqVExw3KEyhNHwBt9EUfYTiXNDONNg5A5R0hTa_T_UvkWSAKtIJH-uFEgKByG80ROiNIQqwS4kWMipo_-Nt6r0Q4yPL_7NtsMuPPLeSZ5ZgzzIdR9PDitSPzukrQhdX4nDDQ
+      method: GET
+      uri: https://api.frontegg.com/audits/stats/?tenantId=my-tenant-id
+    response:
+      body:
+        string: '{"totalToday":2,"severeThisWeek":0}'
+      headers:
+        Access-Control-Allow-Credentials:
+          - "true"
+        Content-Length:
+          - "35"
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Mon, 13 Jan 2020 09:00:44 GMT
+        ETag:
+          - W/"23-Kp2UZ1w9TS/i+0Q28LP3SW7u3iY"
+        access-control-allow-origin:
+          - "*"
+        strict-transport-security:
+          - max-age=15552000; includeSubDomains
+        x-content-type-options:
+          - nosniff
+        x-dns-prefetch-control:
+          - "off"
+        x-download-options:
+          - noopen
+        x-frame-options:
+          - SAMEORIGIN
+        x-xss-protection:
+          - 1; mode=block
+      status:
+        code: 200
+        message: OK
+version: 1

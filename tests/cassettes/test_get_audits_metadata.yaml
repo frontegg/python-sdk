@@ -1,0 +1,101 @@
+interactions:
+  - request:
+      body: clientId=the-client-id&secret=my-api-key
+      headers:
+        Accept:
+          - '*/*'
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        Content-Length:
+          - '63'
+        Content-Type:
+          - application/x-www-form-urlencoded
+        User-Agent:
+          - python-requests/2.22.0
+      method: POST
+      uri: https://api.frontegg.com/auth/vendor
+    response:
+      body:
+        string: '{"token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3JJZCI6IjJmYjgzNWQwLThmMTctNDhjYi04NDg5LTNhMmY4ZjUwY2U0YSIsInNjb3BlcyI6WyJhdWRpdHM6YWRkIiwiYXVkaXRzOmdldCIsInRlYW06Z2V0IiwidGVhbTphZGQiLCJ0ZWFtOmRlbGV0ZSIsInRlYW06dXBkYXRlIl0sInR5cGUiOiJ2ZW5kb3IiLCJpYXQiOjE1Nzg5MTA2MDQsImV4cCI6MTU3ODkxMjQwNH0.Sm-i5HwwOO2V8I5Ln-QkMsNzN2_qnDwlJP9uTitZc5EzISwaj6GcJwUOJmCHZxT1dL9FyRFLCEk2IynW9vq3gq4Yam7rIsLl89BBBQ7RtHgUhC_MR_BYGJ88j6xIyz7uiO4wNEcCAeIDg8EMlcateo5tb5Sz5tJSXY4r0sD5nGeD7Q2_02c3c4IFiM5NCGpN5SLsPUt4sGPDyIM_nIN7_9wSRNdmGwFl8FyNL6d2pXI8e0md9LkGCEexolnI7JoizkDXIitJc6q0hhMfr2_6hY6LXreIvSMCbWKbg6YxdyiWxtwUGFwyJt2ur-kjP4ddi_WbO4xiOCTnMn8KPlrIiQ","expiresIn":1800}'
+      headers:
+        Access-Control-Allow-Credentials:
+          - 'true'
+        Content-Length:
+          - '660'
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Mon, 13 Jan 2020 10:16:43 GMT
+        ETag:
+          - W/"294-yqSCddNqjT/Eu7q6gXLPf2SD/v0"
+        access-control-allow-origin:
+          - '*'
+        strict-transport-security:
+          - max-age=15552000; includeSubDomains
+        x-content-type-options:
+          - nosniff
+        x-dns-prefetch-control:
+          - 'off'
+        x-download-options:
+          - noopen
+        x-frame-options:
+          - SAMEORIGIN
+        x-xss-protection:
+          - 1; mode=block
+      status:
+        code: 200
+        message: OK
+  - request:
+      body: null
+      headers:
+        Accept:
+          - '*/*'
+        Accept-Encoding:
+          - gzip, deflate
+        Connection:
+          - keep-alive
+        User-Agent:
+          - python-requests/2.22.0
+        frontegg-tenant-id:
+          - my-tenant-id
+        frontegg-user-id:
+          - ee@ee.eee
+        x-access-token:
+          - eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3JJZCI6IjJmYjgzNWQwLThmMTctNDhjYi04NDg5LTNhMmY4ZjUwY2U0YSIsInNjb3BlcyI6WyJhdWRpdHM6YWRkIiwiYXVkaXRzOmdldCIsInRlYW06Z2V0IiwidGVhbTphZGQiLCJ0ZWFtOmRlbGV0ZSIsInRlYW06dXBkYXRlIl0sInR5cGUiOiJ2ZW5kb3IiLCJpYXQiOjE1Nzg5MTA2MDQsImV4cCI6MTU3ODkxMjQwNH0.Sm-i5HwwOO2V8I5Ln-QkMsNzN2_qnDwlJP9uTitZc5EzISwaj6GcJwUOJmCHZxT1dL9FyRFLCEk2IynW9vq3gq4Yam7rIsLl89BBBQ7RtHgUhC_MR_BYGJ88j6xIyz7uiO4wNEcCAeIDg8EMlcateo5tb5Sz5tJSXY4r0sD5nGeD7Q2_02c3c4IFiM5NCGpN5SLsPUt4sGPDyIM_nIN7_9wSRNdmGwFl8FyNL6d2pXI8e0md9LkGCEexolnI7JoizkDXIitJc6q0hhMfr2_6hY6LXreIvSMCbWKbg6YxdyiWxtwUGFwyJt2ur-kjP4ddi_WbO4xiOCTnMn8KPlrIiQ
+      method: GET
+      uri: https://api.frontegg.com/metadata?entityName=audits
+    response:
+      body:
+        string: '{"rows":[{"_id":"5d3d2ee54a04a50033da91df","entityName":"audits","properties":[{"_id":"5d3d2ee54a04a50033da91e6","name":"createdAt","displayName":"Date","type":"Timestamp","filterable":true,"sortable":true},{"_id":"5d3d2ee54a04a50033da91e5","name":"user","displayName":"User","type":"UserIdentity","filterable":true,"sortable":true},{"_id":"5d3d2ee54a04a50033da91e4","name":"resource","displayName":"Resource","type":"AlphaNumeric","filterable":true,"sortable":true},{"_id":"5d3d2ee54a04a50033da91e3","name":"action","displayName":"Action","type":"AlphaNumeric","filterable":true,"sortable":true},{"_id":"5d3d2ee54a04a50033da91e2","name":"severity","displayName":"Severity","type":"AlphaNumeric","filterable":true,"sortable":true},{"_id":"5d3d2ee54a04a50033da91e1","name":"ip","displayName":"IP
+        Address","type":"AlphaNumeric","filterable":true,"sortable":true},{"_id":"5d3d2ee54a04a50033da91e0","name":"message","displayName":"Message","type":"AlphaNumeric","filterable":true,"sortable":false}],"vendorId":"my-client-id","id":"39372f0f-1d14-4ecd-8462-1b22d5ca9264","createdAt":"2019-07-28T05:13:09.723Z","updatedAt":"2019-07-28T05:13:09.723Z","__v":0}]}'
+      headers:
+        Access-Control-Allow-Credentials:
+          - 'true'
+        Content-Length:
+          - '1177'
+        Content-Type:
+          - application/json; charset=utf-8
+        Date:
+          - Mon, 13 Jan 2020 10:16:43 GMT
+        ETag:
+          - W/"499-FSYxooAosm1HqpltAxwyRG6LaCg"
+        access-control-allow-origin:
+          - '*'
+        strict-transport-security:
+          - max-age=15552000; includeSubDomains
+        x-content-type-options:
+          - nosniff
+        x-dns-prefetch-control:
+          - 'off'
+        x-download-options:
+          - noopen
+        x-frame-options:
+          - SAMEORIGIN
+        x-xss-protection:
+          - 1; mode=block
+      status:
+        code: 200
+        message: OK
+version: 1
