@@ -132,7 +132,8 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
                 method: str,
                 json: typing.Optional[dict] = None,
                 params: typing.Optional[dict] = None,
-                tenant_id: typing.Optional[str] = None) -> requests.Response:
+                tenant_id: typing.Optional[str] = None,
+                host: typing.Optional[str] = None) -> requests.Response:
         """Perform a request to Frontegg's API.
 
         :param endpoint: The endpoint to perform the request to.
@@ -159,7 +160,9 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
         validate_permissions(endpoint, method, permissions=permissions)
 
         headers = {
-            'x-access-token': self.api_token
+            'x-access-token': self.api_token,
+            'frontegg-vendor-host': host
+
         }
         if tenant_id:
             headers['frontegg-tenant-id'] = tenant_id
@@ -181,7 +184,8 @@ class FronteggRESTClient(BaseFronteggClient[None]):
     def __init__(self,
                  client_id: str,
                  api_key: str,
-                 context_callback: typing.Optional[typing.Callable[[RequestT], FronteggContext]] = None,
+                 context_callback: typing.Optional[typing.Callable[[
+                     RequestT], FronteggContext]] = None,
                  base_url: str = 'https://api.frontegg.com/',
                  authentication_service_url: typing.Optional[str] = None) -> None:
         """Initialize the Frontegg REST client.
@@ -218,7 +222,8 @@ class FronteggClient(SSOClientMixin, AuditsClientMixin):
     def __init__(self,
                  client_id: str,
                  api_key: str,
-                 context_callback: typing.Optional[typing.Callable[[RequestT], FronteggContext]] = None,
+                 context_callback: typing.Optional[typing.Callable[[
+                     RequestT], FronteggContext]] = None,
                  base_url: str = 'https://api.frontegg.com/',
                  authentication_service_url: typing.Optional[str] = None,
                  audits_service_url: typing.Optional[str] = None,
