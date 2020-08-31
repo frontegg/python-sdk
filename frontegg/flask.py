@@ -143,16 +143,14 @@ class Frontegg(AuditsClientMixin):
             proxy_response = self._client.proxy_request(endpoint)
 
             try:
+                headersWithoutCors = {k: v for k, v in proxy_response.headers.items() if not k.lower().startswith('access-control')}
                 response = make_response(
-                    proxy_response.content, proxy_response.status_code)
+                    proxy_response.content, proxy_response.status_code, headersWithoutCors)
+                
                 # response_headers = {
                 #     **response.headers,
                 #     **{key.title(): value for key, value in proxy_response.headers.items()}
                 # }
-                response.headers = Headers(response.headers)
-
-                if proxy_response.headers.get('set-cookie') :
-                    response.headers.set('set-cookie', proxy_response.headers.get('set-cookie'))
                 return response
             except ForbiddenRequest:
                 return {'message': "Forbidden"}, 403
