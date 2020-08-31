@@ -150,6 +150,9 @@ class Frontegg(AuditsClientMixin):
                 #     **{key.title(): value for key, value in proxy_response.headers.items()}
                 # }
                 response.headers = Headers(response.headers)
+
+                if proxy_response.headers.get('set-cookie') :
+                    response.headers.set('set-cookie', proxy_response.headers.get('set-cookie'))
                 return response
             except ForbiddenRequest:
                 return {'message': "Forbidden"}, 403
