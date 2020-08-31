@@ -2,7 +2,7 @@
 
 import typing
 from abc import ABCMeta, abstractmethod
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import arrow
 import requests
