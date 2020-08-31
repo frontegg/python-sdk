@@ -2,7 +2,7 @@
 
 import os
 import typing
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 from flask import (Blueprint, Flask, Request, current_app, make_response,
@@ -35,11 +35,15 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
         :raises requests.HTTPError: If the Frontegg API responds with an HTTP error code, this exception is raised.
         """
 
-        host = request.host
+        o = urlparse(request.base_url)
+        hostname = o.hostname
+
+        print('hostname for the request - ', hostname)
+
         requestJson = None
         if (request.is_json == True and request.data != b''):
             requestJson = request.json
-        return self.request(endpoint, request.method, json=requestJson, params=request.args, host)
+        return self.request(endpoint, request.method, json=requestJson, params=request.args, host=hostname)
 
 
 class Frontegg(AuditsClientMixin):
@@ -141,11 +145,11 @@ class Frontegg(AuditsClientMixin):
             try:
                 response = make_response(
                     proxy_response.content, proxy_response.status_code)
-                response_headers = {
-                    **response.headers,
-                    **{key.title(): value for key, value in proxy_response.headers.items()}
-                }
-                response.headers = Headers(response_headers)
+                # response_headers = {
+                #     **response.headers,
+                #     **{key.title(): value for key, value in proxy_response.headers.items()}
+                # }
+                response.headers = Headers(response.headers)
                 return response
             except ForbiddenRequest:
                 return {'message': "Forbidden"}, 403
