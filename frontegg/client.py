@@ -134,7 +134,7 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
                 params: typing.Optional[dict] = None,
                 tenant_id: typing.Optional[str] = None,
                 host: typing.Optional[str] = None,
-                headers: typing.Optional[dict] = None) -> requests.Response:
+                headers: typing.Optional[dict] = {}) -> requests.Response:
         """Perform a request to Frontegg's API.
 
         :param endpoint: The endpoint to perform the request to.
@@ -161,9 +161,8 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
         validate_permissions(endpoint, method, permissions=permissions)
 
         newHeaders = {}
-        if(headers):
-            newHeaders = dict(headers)
-
+        if(headers['Cookie']):
+            newHeaders['Cookie'] = headers['Cookie']
         newHeaders['x-access-token'] = self.api_token
         newHeaders['frontegg-vendor-host'] =host
 
