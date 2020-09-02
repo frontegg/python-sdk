@@ -133,7 +133,8 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
                 json: typing.Optional[dict] = None,
                 params: typing.Optional[dict] = None,
                 tenant_id: typing.Optional[str] = None,
-                host: typing.Optional[str] = None) -> requests.Response:
+                host: typing.Optional[str] = None,
+                headers: typing.Optional[dict] = None) -> requests.Response:
         """Perform a request to Frontegg's API.
 
         :param endpoint: The endpoint to perform the request to.
@@ -159,21 +160,23 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
             permissions = (FronteggPermissions.All,)
         validate_permissions(endpoint, method, permissions=permissions)
 
-        headers = {
-            'x-access-token': self.api_token,
-            'frontegg-vendor-host': host
+        newHeaders = {}
+        if(headers):
+            newHeaders = dict(headers)
 
-        }
+        newHeaders['x-access-token'] = self.api_token
+        newHeaders['frontegg-vendor-host'] =host
+
         if tenant_id:
-            headers['frontegg-tenant-id'] = tenant_id
+            newHeaders['frontegg-tenant-id'] = tenant_id
         if user_id:
-            headers['frontegg-user-id'] = user_id
+            newHeaders['frontegg-user-id'] = user_id
 
         return self.session.request(
             method,
             urljoin(self.base_url, endpoint),
             allow_redirects=False,
-            headers=headers,
+            headers=newHeaders,
             json=json,
             params=params)
 

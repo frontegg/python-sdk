@@ -37,11 +37,10 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
 
         o = urlparse(request.base_url)
         hostname = o.hostname
-
         requestJson = None
         if (request.is_json == True and request.data != b''):
             requestJson = request.json
-        return self.request(endpoint, request.method, json=requestJson, params=request.args, host=hostname)
+        return self.request(endpoint, request.method, json=requestJson, params=request.args, host=hostname, headers=request.headers)
 
 
 class Frontegg(AuditsClientMixin, IdentityClientMixin):
