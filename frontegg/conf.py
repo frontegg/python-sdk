@@ -15,4 +15,8 @@ FronteggApiUrls['audits_service'] = os.environ.get('FRONTEGG_AUDITS_SERVICE_URL'
 FronteggApiUrls['metadata'] = os.environ.get('FRONTEGG_METADATA_SERVICE_URL',
                                              urljoin(FronteggApiUrls['gateway'], '/metadata'))
 
+FronteggApiUrls['identity'] = os.environ.get('FRONTEGG_IDENTITY_SERVICE_URL',
+                                             urljoin(FronteggApiUrls['gateway'], '/identity'))
+
+
 __all__ = ('FronteggApiUrls',)

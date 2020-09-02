@@ -1,6 +1,9 @@
 import typing
 from abc import ABCMeta, abstractmethod
 from urllib.parse import urlsplit, urlunsplit
+from functools import wraps
+from flask import request, make_response
+import jwt
 
 
 def _get_filters(count, filter, filters, offset, sort_by, sort_direction):
@@ -249,3 +252,55 @@ class SSOClientMixin(metaclass=ABCMeta):
             json=saml_response
         )
         return response.json()
+
+class IdentityClientMixin(metaclass=ABCMeta):
+    __publicKey = None
+    
+
+    @property
+    @abstractmethod
+    def _config(self) -> dict:
+        """A dictionary containing the configuration for Frontegg."""
+        pass
+
+    def __getPublicKey(self) -> str:
+        if(self.__publicKey): return self.__publicKey
+        url = '/'.join([self._config['FRONTEGG_IDENTITY_SERVICE_URL'],
+                     'resources/configurations/v1'])
+        response = self._client.request(
+            url,
+            'GET'
+        )
+        data = response.json()
+        self.__publicKey = data.get('publicKey')
+        return self.__publicKey
+
+    
+        
+    def __responseUnautourized(self):
+        return make_response('Unautourized', 403)
+
+    def withAuthentication(
+        self,
+        permissionKeys: typing.Optional[list] = [],
+        roleKeys: typing.Optional[list] = []
+        ):
+        def decorator(f):
+            @wraps(f)
+            def decorated_function(*args, **kwargs):
+                authorizationHeader = request.headers.get('Authorization')
+                if(not authorizationHeader): return self.__responseUnautourized()
+                jwtToken = authorizationHeader.replace('Bearer ', '')
+                try:
+                    publicKey = self.__getPublicKey()
+                    
+                    decoded = jwt.decode(jwtToken, publicKey, algorithms='RS256')
+                    validePermissions = all(permission in decoded['permissions']  for permission in permissionKeys)
+                    validRoles = all(role in decoded['roles']  for role in roleKeys)
+                    if(validePermissions and validRoles):
+                        return f(*args, **kwargs)
+                    return self.__responseUnautourized()
+                except:
+                    return self.__responseUnautourized()
+            return decorated_function
+        return decorator
