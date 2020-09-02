@@ -9,7 +9,7 @@ from flask import (Blueprint, Flask, Request, current_app, make_response,
                    request)
 from werkzeug.datastructures import Headers
 
-from frontegg._mixins import AuditsClientMixin
+from frontegg._mixins import AuditsClientMixin, IdentityClientMixin
 from frontegg.client import BaseFronteggClient
 from frontegg.permissions import ForbiddenRequest
 
@@ -38,15 +38,13 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
         o = urlparse(request.base_url)
         hostname = o.hostname
 
-        print('hostname for the request - ', hostname)
-
         requestJson = None
         if (request.is_json == True and request.data != b''):
             requestJson = request.json
         return self.request(endpoint, request.method, json=requestJson, params=request.args, host=hostname)
 
 
-class Frontegg(AuditsClientMixin):
+class Frontegg(AuditsClientMixin, IdentityClientMixin):
     """Frontegg Flask Extension.
 
     >>> from flask import Flask
@@ -118,24 +116,14 @@ class Frontegg(AuditsClientMixin):
         app.config.setdefault('FRONTEGG_TEAM_SERVICE_URL',
                               frontegg_team_service_url)
 
+        frontegg_identity_service_url = os.environ.get('FRONTEGG_IDENTITY_SERVICE_URL',
+                                                   urljoin(frontegg_api_gateway_url,
+                                                           '/identity'))
+        app.config.setdefault('FRONTEGG_IDENTITY_SERVICE_URL',
+                              frontegg_identity_service_url)
+
         frontegg_blueprint = Blueprint(
             'frontegg', __name__, url_prefix='/frontegg')
-
-        @app.route('/frontegg/identity/resources/auth/v1/user')
-        def user():
-            return 'Hello, World'
-
-        @app.route('/frontegg/identity/resources/auth/v1/user/token/refresh')
-        def tokenRefresh():
-            return 'Hello, World'
-
-        @app.route('/frontegg/identity/resources/auth/v1/user/saml/postlogin')
-        def post_login():
-            return 'Hello, World'
-
-        @app.route('/frontegg/identity/resources/auth/v1/user/mfa/verify')
-        def mfa_verify():
-            return 'Hello, World'
 
         @frontegg_blueprint.route('/<path:endpoint>',
                                   methods=('GET', 'POST', 'PUT', 'DELETE', 'PATCH'))

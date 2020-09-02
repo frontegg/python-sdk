@@ -11,6 +11,9 @@ flask-cors = "*"
 flask-restful = "*"
 arrow = "*"
 requests = "*"
+aiohttp-cors = "*"
+pyjwt = "*"
+cryptography = "*"
 
 [requires]
 python_version = "3.8"
