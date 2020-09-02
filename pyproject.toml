@@ -24,7 +24,7 @@ requests = "^2.22.0"
 arrow = "^0.15.5"
 aiohttp = {version = "^3.6.2", optional = true}
 pyjwt = "^1.7.1"
-cryptography = "^3.1
+cryptography = "^3.1"
 
 [tool.poetry.extras]
 flask = ["flask"]
