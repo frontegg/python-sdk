@@ -238,7 +238,7 @@ class SSOClientMixin(metaclass=ABCMeta):
         """
         response = self._client.request(
             '/'.join([self._config['FRONTEGG_TEAM_SERVICE_URL'],
-                     'resources/sso/v1/prelogin']),
+                      'resources/sso/v1/prelogin']),
             'POST',
             json={'payload': payload}
         )
@@ -247,15 +247,15 @@ class SSOClientMixin(metaclass=ABCMeta):
     def postlogin(self, saml_response):
         response = self._client.request(
             '/'.join([self._config['FRONTEGG_TEAM_SERVICE_URL'],
-                     'resources/sso/v1/postlogin']),
+                      'resources/sso/v1/postlogin']),
             'POST',
             json=saml_response
         )
         return response.json()
 
+
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
-    
 
     @property
     @abstractmethod
@@ -264,9 +264,10 @@ class IdentityClientMixin(metaclass=ABCMeta):
         pass
 
     def __getPublicKey(self) -> str:
-        if(self.__publicKey): return self.__publicKey
+        if(self.__publicKey):
+            return self.__publicKey
         url = '/'.join([self._config['FRONTEGG_IDENTITY_SERVICE_URL'],
-                     'resources/configurations/v1'])
+                        'resources/configurations/v1'])
         response = self._client.request(
             url,
             'GET'
@@ -275,32 +276,40 @@ class IdentityClientMixin(metaclass=ABCMeta):
         self.__publicKey = data.get('publicKey')
         return self.__publicKey
 
-    
-        
-    def __responseUnautourized(self):
-        return make_response('Unautourized', 403)
+    def __responseUnauthenticated(self):
+        return make_response('Unauthenticated', 401)
+
+    def __responseUnauthorized(self):
+        return make_response('Unauthorized', 403)
 
     def withAuthentication(
         self,
         permissionKeys: typing.Optional[list] = [],
         roleKeys: typing.Optional[list] = []
-        ):
+    ):
         def decorator(f):
             @wraps(f)
             def decorated_function(*args, **kwargs):
                 authorizationHeader = request.headers.get('Authorization')
-                if(not authorizationHeader): return self.__responseUnautourized()
+                if(not authorizationHeader):
+                    return self.__responseUnauthenticated()
                 jwtToken = authorizationHeader.replace('Bearer ', '')
                 try:
                     publicKey = self.__getPublicKey()
-                    
-                    decoded = jwt.decode(jwtToken, publicKey, algorithms='RS256')
-                    validePermissions = all(permission in decoded['permissions']  for permission in permissionKeys)
-                    validRoles = all(role in decoded['roles']  for role in roleKeys)
+
+                    decoded = jwt.decode(
+                        jwtToken, publicKey, algorithms='RS256')
+
+                    # Store the user on the request
+                    request.user = decoded
+                    validePermissions = all(
+                        permission in decoded['permissions'] for permission in permissionKeys)
+                    validRoles = all(
+                        role in decoded['roles'] for role in roleKeys)
                     if(validePermissions and validRoles):
                         return f(*args, **kwargs)
-                    return self.__responseUnautourized()
+                    return self.__responseUnauthorized()
                 except:
-                    return self.__responseUnautourized()
+                    return self.__responseUnauthenticated()
             return decorated_function
         return decorator
