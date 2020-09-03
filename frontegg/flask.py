@@ -3,12 +3,13 @@
 import os
 import typing
 from urllib.parse import urljoin, urlparse
-
+from .helpers.singleton import singleton
 import requests
 from flask import (Blueprint, Flask, Request, current_app, make_response,
                    request)
 from werkzeug.datastructures import Headers
-
+from functools import wraps
+import jwt
 from frontegg._mixins import AuditsClientMixin, IdentityClientMixin
 from frontegg.client import BaseFronteggClient
 from frontegg.permissions import ForbiddenRequest
@@ -42,8 +43,8 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
             requestJson = request.json
         return self.request(endpoint, request.method, json=requestJson, params=request.args, host=hostname, headers=request.headers)
 
-
-class Frontegg(AuditsClientMixin, IdentityClientMixin):
+@singleton
+class frontegg(AuditsClientMixin, IdentityClientMixin):
     """Frontegg Flask Extension.
 
     >>> from flask import Flask
@@ -54,7 +55,7 @@ class Frontegg(AuditsClientMixin, IdentityClientMixin):
     >>> frontegg = Frontegg(app)
     """
 
-    def __init__(self, app: typing.Optional[Flask] = None):
+    def init_app(self, app: typing.Optional[Flask] = None):
         """Initialize the Frontegg extension.
 
         If an app is provided, then the extension is registered to the app.
@@ -74,14 +75,14 @@ class Frontegg(AuditsClientMixin, IdentityClientMixin):
             client_id, api_key, context_callback)
 
         if app is not None:
-            self.init_app(app)
+            self.init_frontegg_app(app)
 
     @property
     def _config(self) -> dict:
         """The current flask app's configuration"""
         return current_app.config
 
-    def init_app(self, app: Flask) -> None:
+    def init_frontegg_app(self, app: Flask) -> None:
         """Initialize the extension for the app.
 
         :param app: The flask application to extend.
@@ -145,4 +146,27 @@ class Frontegg(AuditsClientMixin, IdentityClientMixin):
         app.register_blueprint(frontegg_blueprint)
 
 
-__all__ = ('Frontegg',)
+def withAuthentication(
+    permissionKeys: typing.Optional[list] = [],
+    roleKeys: typing.Optional[list] = []
+    ):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            authorizationHeader = request.headers.get('Authorization')
+            if(not authorizationHeader): return frontegg.__responseUnautourized()
+            jwtToken = authorizationHeader.replace('Bearer ', '')
+            try:
+                publicKey = frontegg.__getPublicKey()
+                decoded = jwt.decode(jwtToken, publicKey, algorithms='RS256')
+                validePermissions = all(permission in decoded['permissions']  for permission in permissionKeys)
+                validRoles = all(role in decoded['roles']  for role in roleKeys)
+                if(validePermissions and validRoles):
+                    return f(*args, **kwargs)
+                return frontegg.__responseUnautourized()
+            except:
+                return frontegg.__responseUnautourized()
+        return decorated_function
+    return decorator
+
+__all__ = ('frontegg','withAuthentication')

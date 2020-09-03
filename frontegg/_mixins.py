@@ -1,9 +1,9 @@
 import typing
 from abc import ABCMeta, abstractmethod
 from urllib.parse import urlsplit, urlunsplit
-from functools import wraps
+
 from flask import request, make_response
-import jwt
+
 
 
 def _get_filters(count, filter, filters, offset, sort_by, sort_direction):
@@ -221,7 +221,6 @@ class AuditsClientMixin(metaclass=ABCMeta):
 
         return response.content
 
-
 class SSOClientMixin(metaclass=ABCMeta):
     @property
     @abstractmethod
@@ -255,7 +254,6 @@ class SSOClientMixin(metaclass=ABCMeta):
 
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
-    
 
     @property
     @abstractmethod
@@ -274,33 +272,7 @@ class IdentityClientMixin(metaclass=ABCMeta):
         data = response.json()
         self.__publicKey = data.get('publicKey')
         return self.__publicKey
-
-    
         
     def __responseUnautourized(self):
         return make_response('Unautourized', 403)
 
-    def withAuthentication(
-        self,
-        permissionKeys: typing.Optional[list] = [],
-        roleKeys: typing.Optional[list] = []
-        ):
-        def decorator(f):
-            @wraps(f)
-            def decorated_function(*args, **kwargs):
-                authorizationHeader = request.headers.get('Authorization')
-                if(not authorizationHeader): return self.__responseUnautourized()
-                jwtToken = authorizationHeader.replace('Bearer ', '')
-                try:
-                    publicKey = self.__getPublicKey()
-                    
-                    decoded = jwt.decode(jwtToken, publicKey, algorithms='RS256')
-                    validePermissions = all(permission in decoded['permissions']  for permission in permissionKeys)
-                    validRoles = all(role in decoded['roles']  for role in roleKeys)
-                    if(validePermissions and validRoles):
-                        return f(*args, **kwargs)
-                    return self.__responseUnautourized()
-                except:
-                    return self.__responseUnautourized()
-            return decorated_function
-        return decorator
