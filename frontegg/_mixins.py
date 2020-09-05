@@ -221,6 +221,7 @@ class AuditsClientMixin(metaclass=ABCMeta):
 
         return response.content
 
+
 class SSOClientMixin(metaclass=ABCMeta):
     @property
     @abstractmethod
