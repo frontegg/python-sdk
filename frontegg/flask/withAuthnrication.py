@@ -25,7 +25,7 @@ def with_authentication(
                     return f(*args, **kwargs)
                 return make_response('Forbidden', 403)
             except:
-                return make_response('Forbidden', 403)
+                return make_response('Unauthorized', 401)
 
         return decorated_function
 
