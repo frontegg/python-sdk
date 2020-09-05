@@ -17,7 +17,7 @@ def with_authentication(
                 return make_response('Unauthorized', 401)
             jwt_token = authorization_header.replace('Bearer ', '')
             try:
-                public_key = frontegg.__getPublicKey()
+                public_key = frontegg.getPublicKey()
                 decoded = jwt.decode(jwt_token, public_key, algorithms='RS256')
                 valid_permissions = all(permission in decoded['permissions'] for permission in permission_keys)
                 valid_roles = all(role in decoded['roles'] for role in role_keys)
