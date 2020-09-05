@@ -1,9 +1,9 @@
 import typing
 from abc import ABCMeta, abstractmethod
 from urllib.parse import urlsplit, urlunsplit
-from functools import wraps
+
 from flask import request, make_response
-import jwt
+
 
 
 def _get_filters(count, filter, filters, offset, sort_by, sort_direction):
@@ -263,7 +263,7 @@ class IdentityClientMixin(metaclass=ABCMeta):
         """A dictionary containing the configuration for Frontegg."""
         pass
 
-    def __getPublicKey(self) -> str:
+    def getPublicKey(self) -> str:
         if(self.__publicKey):
             return self.__publicKey
         url = '/'.join([self._config['FRONTEGG_IDENTITY_SERVICE_URL'],
@@ -276,40 +276,5 @@ class IdentityClientMixin(metaclass=ABCMeta):
         self.__publicKey = data.get('publicKey')
         return self.__publicKey
 
-    def __responseUnauthenticated(self):
-        return make_response('Unauthenticated', 401)
 
-    def __responseUnauthorized(self):
-        return make_response('Unauthorized', 403)
 
-    def withAuthentication(
-        self,
-        permissionKeys: typing.Optional[list] = [],
-        roleKeys: typing.Optional[list] = []
-    ):
-        def decorator(f):
-            @wraps(f)
-            def decorated_function(*args, **kwargs):
-                authorizationHeader = request.headers.get('Authorization')
-                if(not authorizationHeader):
-                    return self.__responseUnauthenticated()
-                jwtToken = authorizationHeader.replace('Bearer ', '')
-                try:
-                    publicKey = self.__getPublicKey()
-
-                    decoded = jwt.decode(
-                        jwtToken, publicKey, algorithms='RS256')
-
-                    # Store the user on the request
-                    request.user = decoded
-                    validePermissions = all(
-                        permission in decoded['permissions'] for permission in permissionKeys)
-                    validRoles = all(
-                        role in decoded['roles'] for role in roleKeys)
-                    if(validePermissions and validRoles):
-                        return f(*args, **kwargs)
-                    return self.__responseUnauthorized()
-                except:
-                    return self.__responseUnauthenticated()
-            return decorated_function
-        return decorator

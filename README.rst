@@ -119,12 +119,12 @@ To begin proxying requests you should
 
     from flask import Flask
     from frontegg import FronteggContext
-    from frontegg.flask import Frontegg
+    from frontegg.flask import frotnegg
     app = Flask('example')
     app.config['FRONTEGG_CLIENT_ID'] = 'your client id'
     app.config['FRONTEGG_API_KEY'] = 'your api key'
     app.config['FRONTEGG_CONTEXT_RESOLVER'] = lambda request: FronteggContext('user_id@user.com', 'my-tenant-id')
-    frontegg = Frontegg(app)
+    frontegg.init_app(app)
 
 
 aiohttp async support
