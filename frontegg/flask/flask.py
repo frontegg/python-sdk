@@ -3,13 +3,11 @@
 import os
 import typing
 from urllib.parse import urljoin, urlparse
-from .helpers.singleton import singleton
+from frontegg.helpers.singleton import singleton
 import requests
 from flask import (Blueprint, Flask, Request, current_app, make_response,
                    request)
-from werkzeug.datastructures import Headers
-from functools import wraps
-import jwt
+
 from frontegg._mixins import AuditsClientMixin, IdentityClientMixin
 from frontegg.client import BaseFronteggClient
 from frontegg.permissions import ForbiddenRequest
@@ -146,27 +144,4 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
         app.register_blueprint(frontegg_blueprint)
 
 
-def withAuthentication(
-    permissionKeys: typing.Optional[list] = [],
-    roleKeys: typing.Optional[list] = []
-    ):
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            authorizationHeader = request.headers.get('Authorization')
-            if(not authorizationHeader): return frontegg.__responseUnautourized()
-            jwtToken = authorizationHeader.replace('Bearer ', '')
-            try:
-                publicKey = frontegg.__getPublicKey()
-                decoded = jwt.decode(jwtToken, publicKey, algorithms='RS256')
-                validePermissions = all(permission in decoded['permissions']  for permission in permissionKeys)
-                validRoles = all(role in decoded['roles']  for role in roleKeys)
-                if(validePermissions and validRoles):
-                    return f(*args, **kwargs)
-                return frontegg.__responseUnautourized()
-            except:
-                return frontegg.__responseUnautourized()
-        return decorated_function
-    return decorator
-
-__all__ = ('frontegg','withAuthentication')
+__all__ = ('frontegg')

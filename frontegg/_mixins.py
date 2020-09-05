@@ -237,7 +237,7 @@ class SSOClientMixin(metaclass=ABCMeta):
         """
         response = self._client.request(
             '/'.join([self._config['FRONTEGG_TEAM_SERVICE_URL'],
-                     'resources/sso/v1/prelogin']),
+                      'resources/sso/v1/prelogin']),
             'POST',
             json={'payload': payload}
         )
@@ -246,11 +246,12 @@ class SSOClientMixin(metaclass=ABCMeta):
     def postlogin(self, saml_response):
         response = self._client.request(
             '/'.join([self._config['FRONTEGG_TEAM_SERVICE_URL'],
-                     'resources/sso/v1/postlogin']),
+                      'resources/sso/v1/postlogin']),
             'POST',
             json=saml_response
         )
         return response.json()
+
 
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
@@ -261,10 +262,11 @@ class IdentityClientMixin(metaclass=ABCMeta):
         """A dictionary containing the configuration for Frontegg."""
         pass
 
-    def __getPublicKey(self) -> str:
-        if(self.__publicKey): return self.__publicKey
+    def getPublicKey(self) -> str:
+        if(self.__publicKey):
+            return self.__publicKey
         url = '/'.join([self._config['FRONTEGG_IDENTITY_SERVICE_URL'],
-                     'resources/configurations/v1'])
+                        'resources/configurations/v1'])
         response = self._client.request(
             url,
             'GET'
@@ -272,7 +274,6 @@ class IdentityClientMixin(metaclass=ABCMeta):
         data = response.json()
         self.__publicKey = data.get('publicKey')
         return self.__publicKey
-        
-    def __responseUnautourized(self):
-        return make_response('Unautourized', 403)
+
+
 
