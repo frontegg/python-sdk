@@ -161,10 +161,10 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
         validate_permissions(endpoint, method, permissions=permissions)
 
         newHeaders = {}
-        if(headers['Cookie']):
+        if headers.get('Cookie'):
             newHeaders['Cookie'] = headers['Cookie']
         newHeaders['x-access-token'] = self.api_token
-        newHeaders['frontegg-vendor-host'] =host
+        newHeaders['frontegg-vendor-host'] = host
 
         if tenant_id:
             newHeaders['frontegg-tenant-id'] = tenant_id
