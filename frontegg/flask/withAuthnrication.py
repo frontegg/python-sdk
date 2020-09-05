@@ -5,7 +5,7 @@ from flask import make_response, request
 from . import frontegg
 
 
-def withAuthentication(
+def with_authentication(
         permission_keys: typing.Optional[list] = [],
         role_keys: typing.Optional[list] = []
 ):

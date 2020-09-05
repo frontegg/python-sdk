@@ -1,4 +1,4 @@
 from .flask import frontegg
-from .withAuthnrication import withAuthentication
+from .withAuthnrication import with_authentication
 
-__all__ = ('frontegg','withAuthentication')
+__all__ = ('frontegg','with_authentication')

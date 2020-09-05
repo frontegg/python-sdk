@@ -1,7 +1,7 @@
 import os
 from flask import Flask, make_response
 from frontegg import FronteggContext
-from frontegg.flask import frontegg, withAuthentication
+from frontegg.flask import frontegg, with_authentication
 from flask_cors import CORS
 from examples.example1.secretsApi import secretsApi
 
@@ -19,7 +19,7 @@ frontegg.init_app(app)
 app.register_blueprint(secretsApi)
 
 @app.route('/secret')
-@withAuthentication()
+@with_authentication()
 def cool():
     return make_response('here is a secret - python is lit!', 200)
 
