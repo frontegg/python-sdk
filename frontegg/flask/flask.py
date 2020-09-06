@@ -11,6 +11,7 @@ from flask import (Blueprint, Flask, Request, current_app, make_response,
 from frontegg._mixins import AuditsClientMixin, IdentityClientMixin
 from frontegg.client import BaseFronteggClient
 from frontegg.permissions import ForbiddenRequest
+from .contextProvider import context_provider
 
 
 class FronteggFlaskClient(BaseFronteggClient[Request]):
@@ -61,10 +62,14 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
 
         :param app: The flask application to extend.
         """
+        if app.config.get('FRONTEGG_CONTEXT_RESOLVER'):
+            context_callback = app.config['FRONTEGG_CONTEXT_RESOLVER']
+        else:
+            context_callback = context_provider
+
         try:
             client_id = app.config['FRONTEGG_CLIENT_ID']
             api_key = app.config['FRONTEGG_API_KEY']
-            context_callback = app.config['FRONTEGG_CONTEXT_RESOLVER']
         except KeyError as e:
             raise ValueError(
                 "{} must be specified in the application's configuration.".format(e))
