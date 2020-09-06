@@ -1,7 +1,7 @@
 import os
 from flask import Flask, make_response
 from frontegg import FronteggContext
-from frontegg.flask import frontegg, with_authentication
+from frontegg.flask import frontegg, with_authentication, context_provider
 from flask_cors import CORS
 from examples.example1.secretsApi import secretsApi
 
