@@ -47,11 +47,14 @@ class FronteggContext:
 
 class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
     """A REST client for the Frontegg API."""
+    __routes_config = None
 
     def __init__(self,
                  client_id: str,
                  api_key: str,
-                 context_callback: typing.Optional[typing.Callable[[RequestT], FronteggContext]] = None) -> None:
+                 context_callback: typing.Optional[typing.Callable[[RequestT], FronteggContext]] = None,
+                 auth_middleware: typing.Callable[[RequestT], FronteggContext] = None,
+                 ) -> None:
         """Initialize the Frontegg client.
 
         :param client_id: The client ID provided to you by Frontegg
@@ -62,6 +65,7 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
         self.api_key = api_key
         self.client_id = client_id
         self.context_callback = context_callback
+        self.auth_middleware = auth_middleware
         self.session = requests.Session()
         self._api_token = None
         self._expires_in = None
@@ -89,6 +93,44 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
         self._api_token = auth_response_data['token']
         self._expires_in = arrow.utcnow().shift(
             seconds=auth_response_data['expiresIn'] * 0.8)
+
+    @property
+    def routes_config(self):
+        if self.__routes_config:
+            return self.__routes_config
+        response = self.request(urljoin(self.base_url, '/configs/routes'), 'GET')
+
+        self.__routes_config = response.json()
+        return self.__routes_config
+
+    def is_public_route(self) -> bool:
+        request = self.current_request
+        public_routes = self.routes_config['vendorClientPublicRoutes']
+        request_path = request.path.replace('/frontegg/', '')
+
+        for route in public_routes:
+            if request_path != route['url']:
+                continue
+            if request.method.upper() != route['method'].upper():
+                continue
+            if route.get('withQueryParams'):
+                is_valid = True
+                for query_param in route['withQueryParams']:
+                    value = request.args.get(query_param['key'])
+                    if not value:
+                        is_valid = False
+                        break
+                    if query_param['value'] and value != query_param['value']:
+                        is_valid = False
+                        break
+
+                if not is_valid:
+                    continue
+            return True
+        return False
+
+
+
 
     @property
     @abstractmethod
