@@ -8,10 +8,12 @@ import requests
 from flask import (Blueprint, Flask, Request, current_app, make_response,
                    request)
 
+
 from frontegg._mixins import AuditsClientMixin, IdentityClientMixin
 from frontegg.client import BaseFronteggClient
 from frontegg.permissions import ForbiddenRequest
 from .contextProvider import context_provider
+from .authentication_middleware import authentication_middleware
 
 
 class FronteggFlaskClient(BaseFronteggClient[Request]):
@@ -35,6 +37,8 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
         :raises requests.HTTPError: If the Frontegg API responds with an HTTP error code, this exception is raised.
         """
 
+        if self.auth_middleware and not self.is_public_route():
+            self.auth_middleware(self.current_request)
         o = urlparse(request.base_url)
         hostname = o.hostname
         requestJson = None
@@ -67,6 +71,11 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
         else:
             context_callback = context_provider
 
+        if app.config.get('FRONTEGG_AUTHENTICATION_MIDDLEWARE'):
+            auth_middleware = app.config['FRONTEGG_AUTHENTICATION_MIDDLEWARE']
+        else:
+            auth_middleware = authentication_middleware
+
         try:
             client_id = app.config['FRONTEGG_CLIENT_ID']
             api_key = app.config['FRONTEGG_API_KEY']
@@ -75,7 +84,7 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
                 "{} must be specified in the application's configuration.".format(e))
 
         self._client = FronteggFlaskClient(
-            client_id, api_key, context_callback)
+            client_id, api_key, context_callback, auth_middleware)
 
         if app is not None:
             self.init_frontegg_app(app)

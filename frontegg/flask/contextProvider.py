@@ -1,13 +1,8 @@
 from frontegg import FronteggContext
-from flask import request
-import jwt
+import frontegg.flask
+
 
 
 def context_provider(req):
-    authorization_header = request.headers.get('Authorization')
-    if not authorization_header:
-        return FronteggContext('', '')
-    jwt_token = authorization_header.replace('Bearer ', '')
-    decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False)
-    request.user = decoded
+    decoded = frontegg.flask.frontegg.decode_jwt(verify=False)
     return FronteggContext(decoded.get('sub'), decoded.get('tenantId'))
