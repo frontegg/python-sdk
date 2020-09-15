@@ -54,8 +54,9 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
 
     def clean_headers(self, headers: dict, host: str) -> dict:
         new_headers = dict()
+        ignored_headers = ['host', 'authorization']
         for key, value in headers.items():
-            if 'access-control' not in key.lower() and key.lower() != 'host' and key.lower() != 'authorization':
+            if 'access-control' not in key.lower() and key.lower() not in ignored_headers:
                 new_headers[key] = value
 
         new_headers[frontegg_headers['vendor_host']] = host

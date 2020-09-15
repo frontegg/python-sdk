@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Response
 from frontegg.baseConfig.frontegg_proxy import FronteggProxy
 import typing
-from .secure_access import context_provider as secure_access_context_provider, authentication_middleware as secure_access_authentication_middleware
+import frontegg.fastapi.secure_access as secure_access
 
 
 class Frontegg(FronteggProxy):
@@ -19,8 +19,8 @@ class Frontegg(FronteggProxy):
     ):
 
         if with_secure_access:
-            context_provider = context_provider or secure_access_context_provider
-            authentication_middleware = authentication_middleware or secure_access_authentication_middleware
+            context_provider = context_provider or secure_access.context_provider
+            authentication_middleware = authentication_middleware or secure_access.authentication_middleware
 
         super(Frontegg, self).__init__(client_id, api_key, context_provider, authentication_middleware)
 
