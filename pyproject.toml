@@ -20,6 +20,7 @@ readme = "README.rst"
 [tool.poetry.dependencies]
 python = "^3.6"
 flask = { version = "^1.0", optional = true }
+fastapi = { version = "*", optional = true }
 requests = "^2.22.0"
 arrow = "^0.15.5"
 aiohttp = {version = "^3.6.2", optional = true}
