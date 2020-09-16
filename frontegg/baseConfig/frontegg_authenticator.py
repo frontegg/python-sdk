@@ -9,8 +9,8 @@ class FronteggAuthenticator(FronteggConfig):
     __access_token_expiration = None
     vendor_session_request = requests.session()
 
-    def __init__(self, client_id: str, api_key, context_provider=None, authentication_middleware=None):
-        super(FronteggAuthenticator, self).__init__(client_id, api_key, context_provider, authentication_middleware)
+    def __init__(self, client_id: str, api_key, context_provider=None, authentication_middleware=None, middleware_prefix = None):
+        super(FronteggAuthenticator, self).__init__(client_id, api_key, context_provider, authentication_middleware, middleware_prefix=middleware_prefix)
         self.refresh_vendor_token()
 
     @property

@@ -16,13 +16,14 @@ class Frontegg(FronteggProxy):
             context_provider: typing.Callable = None,
             authentication_middleware=None,
             with_secure_access: bool = False,
+            middleware_prefix: str = None,
     ):
 
         if with_secure_access:
             context_provider = context_provider or secure_access.context_provider
             authentication_middleware = authentication_middleware or secure_access.authentication_middleware
 
-        super(Frontegg, self).__init__(client_id, api_key, context_provider, authentication_middleware)
+        super(Frontegg, self).__init__(client_id, api_key, context_provider, authentication_middleware, middleware_prefix)
 
         @app.middleware('http')
         async def middleware(request: Request, call_next):
