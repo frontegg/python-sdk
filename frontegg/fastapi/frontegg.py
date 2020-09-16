@@ -15,7 +15,7 @@ class Frontegg(FronteggProxy):
             api_key,
             context_provider: typing.Callable = None,
             authentication_middleware=None,
-            with_secure_access: bool = False
+            with_secure_access: bool = False,
     ):
 
         if with_secure_access:
@@ -27,7 +27,7 @@ class Frontegg(FronteggProxy):
         @app.middleware('http')
         async def middleware(request: Request, call_next):
             path = request.url.path
-            if path.startswith('/frontegg/'):
+            if path.startswith(self.middleware_prefix) or path.startswith('/'+self.middleware_prefix):
                 body = await request.body()
                 response = self.proxy_request(request=request, method=request.method, path=path,
                                               host=request.client.host, body=body, headers=request.headers,

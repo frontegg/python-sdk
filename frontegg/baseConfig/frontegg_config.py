@@ -6,7 +6,7 @@ class FronteggConfig():
     api_key: str = None
 
     def __init__(self, client_id: str, api_key, context_provider: typing.Callable = None,
-                 authentication_middleware=None):
+                 authentication_middleware=None, middleware_prefix: str = 'frontegg/'):
         if client_id is None:
             raise Exception('client_id is required')
         if api_key is None:
@@ -18,3 +18,4 @@ class FronteggConfig():
         self.api_key = api_key
         self.context_callback = context_provider
         self.authentication_middleware = authentication_middleware
+        self.middleware_prefix = middleware_prefix

@@ -22,7 +22,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
         if not path:
             raise Exception('path is required')
 
-        path_without_frontegg = path.replace('/frontegg/', '').replace('frontegg/', '')
+        path_without_frontegg = path.replace(self.middleware_prefix, '').replace('/'+self.middleware_prefix, '')
 
         public_route = self.is_public_route(path_without_frontegg, params, method)
 
