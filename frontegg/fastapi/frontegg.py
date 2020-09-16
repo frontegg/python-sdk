@@ -29,7 +29,7 @@ class Frontegg(FronteggProxy):
             path = request.url.path
             if path.startswith('/frontegg/'):
                 body = await request.body()
-                response = self.proxy_request(request=request, method=request.method, path=path,
+                response = await self.proxy_request(request=request, method=request.method, path=path,
                                               host=request.client.host, body=body, headers=request.headers,
                                               params=request.query_params)
                 return Response(content=response.content, status_code=response.status_code, headers=response.headers)
