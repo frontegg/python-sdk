@@ -18,4 +18,14 @@ class FronteggConfig():
         self.api_key = api_key
         self.context_callback = context_provider
         self.authentication_middleware = authentication_middleware
-        self.middleware_prefix = middleware_prefix or 'frontegg/'
+
+        # why call "frontegg/" as well? to enable overriding the fix_middleware_prefix func with suitable func for the web framework
+        self.middleware_prefix = self.fix_middleware_prefix_format(middleware_prefix or 'frontegg/')
+
+    def fix_middleware_prefix_format(self, prefix: str):
+        if prefix.startswith('/'):
+            prefix = prefix[1:]
+        if not prefix.endswith('/'):
+            prefix += '/'
+
+        return prefix

@@ -30,13 +30,13 @@ class Frontegg(FronteggProxy):
             path = request.url.path
             if path.startswith(self.middleware_prefix) or path.startswith('/'+self.middleware_prefix):
                 body = await request.body()
-                response = await self.proxy_request(request=request, method=request.method, path=path,
-                                              host=request.client.host, body=body, headers=request.headers,
+                host = request.headers.get('host') or request.client.host
+                response = self.proxy_request(request=request, method=request.method, path=path,
+                                              host=host, body=body, headers=request.headers,
                                               params=request.query_params)
                 return Response(content=response.content, status_code=response.status_code, headers=response.headers)
             else:
                 response = await call_next(request)
                 return response
-
 
 frontegg = Frontegg()
