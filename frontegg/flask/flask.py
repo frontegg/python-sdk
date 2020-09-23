@@ -73,8 +73,6 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
 
         if app.config.get('FRONTEGG_AUTHENTICATION_MIDDLEWARE'):
             auth_middleware = app.config['FRONTEGG_AUTHENTICATION_MIDDLEWARE']
-        else:
-            auth_middleware = authentication_middleware
 
         try:
             client_id = app.config['FRONTEGG_CLIENT_ID']
