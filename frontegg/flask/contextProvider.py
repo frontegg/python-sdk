@@ -1,8 +1,9 @@
 from frontegg import FronteggContext
 import frontegg.flask
 
+def context_provider(request):
+    if request.get('user'):
+        return FronteggContext(request.user.get('sub'), request.user.get('tenantId'))
 
+    return FronteggContext('user-id', 'tenant-id')
 
-def context_provider(req):
-    decoded = frontegg.flask.frontegg.decode_jwt(verify=False)
-    return FronteggContext(decoded.get('sub'), decoded.get('tenantId'))
