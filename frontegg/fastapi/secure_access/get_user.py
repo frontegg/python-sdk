@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from fastapi.security.base import SecurityBase
 from fastapi import Request
 from typing import Optional
-from frontegg.fastapi import frontegg
-
+from jwt import InvalidTokenError
+import frontegg
 
 class GetUser(SecurityBase):
     def __init__(self, scheme_name: str = None, auto_error: bool = True):
@@ -13,9 +13,9 @@ class GetUser(SecurityBase):
     async def __call__(self, request: Request) -> Optional[str]:
         authorization: str = request.headers.get("Authorization")
         try:
-            decoded = frontegg.decode_jwt(authorization)
+            decoded = frontegg.fastapi.frontegg.decode_jwt(authorization)
             return decoded
-        except:
+        except InvalidTokenError:
             if self.auto_error:
                 raise HTTPException(
                     status_code=401, detail="Unauthenticated"
