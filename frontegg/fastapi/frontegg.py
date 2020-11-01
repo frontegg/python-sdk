@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, Response
 from frontegg.baseConfig.frontegg_proxy import FronteggProxy
 import typing
 import frontegg.fastapi.secure_access as secure_access
+from urllib.parse import urlparse
 
 
 class Frontegg(FronteggProxy):
@@ -30,7 +31,8 @@ class Frontegg(FronteggProxy):
             path = request.url.path
             if path.startswith(self.middleware_prefix) or path.startswith('/'+self.middleware_prefix):
                 body = await request.body()
-                host = request.headers.get('host') or request.client.host
+                host = self.__get_host_from_origin(request.headers.get('origin'))
+
                 response = self.proxy_request(request=request, method=request.method, path=path,
                                               host=host, body=body, headers=request.headers,
                                               params=request.query_params)
@@ -38,5 +40,11 @@ class Frontegg(FronteggProxy):
             else:
                 response = await call_next(request)
                 return response
+
+    def __get_host_from_origin(self, origin):
+        if not origin:
+            raise Exception('origin header is missing in the request')
+        url = urlparse(origin)
+        return url.netloc
 
 frontegg = Frontegg()
