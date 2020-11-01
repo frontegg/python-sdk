@@ -19,7 +19,6 @@ class FronteggUrls():
 
     @property
     def authentication_service(self) -> Dict[str, str]:
-        print(self)
         return {
             'base_url': self.__authentication_base_url,
             'authenticate_vendor': urljoin(self.__authentication_base_url, 'vendor/')
