@@ -29,6 +29,7 @@ cryptography = "^3.1"
 
 [tool.poetry.extras]
 flask = ["flask"]
+fastapi = ["fastapi"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.2"
