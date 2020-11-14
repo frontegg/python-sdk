@@ -9,9 +9,14 @@ class FronteggAuthenticator(FronteggConfig):
     __access_token_expiration = None
     vendor_session_request = requests.session()
 
-    def __init__(self, client_id: str, api_key, context_provider=None, authentication_middleware=None, middleware_prefix = None):
-        super(FronteggAuthenticator, self).__init__(client_id, api_key, context_provider, authentication_middleware, middleware_prefix=middleware_prefix)
+    def __init__(self, client_id: str, api_key, context_provider=None, authentication_middleware=None, middleware_prefix=None):
+        super(FronteggAuthenticator, self).__init__(client_id, api_key, context_provider,
+                                                    authentication_middleware, middleware_prefix=middleware_prefix)
         self.refresh_vendor_token()
+
+    @property
+    def access_token(self):
+        return self.__access_token
 
     @property
     def should_refresh_vendor_token(self) -> bool:
@@ -31,5 +36,5 @@ class FronteggAuthenticator(FronteggConfig):
         self.__access_token_expiration = arrow.utcnow().shift(
             seconds=response_body['expiresIn'] * 0.8)
 
-        self.vendor_session_request.headers.update({'x-access-token': self.__access_token})
-
+        self.vendor_session_request.headers.update(
+            {'x-access-token': self.__access_token})

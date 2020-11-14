@@ -1,17 +1,12 @@
 import frontegg.fastapi.frontegg as __frontegg
 from fastapi import Request
+from frontegg import FronteggContext
 
 
 def context_provider(request: Request):
     try:
-        user = __frontegg.frontegg.decode_jwt(request.headers.get('Authorization'))
-        return {
-            'user_id': user.get('sub'),
-            'tenant_id': user.get('tenantId')
-        }
+        user = __frontegg.frontegg.decode_jwt(
+            request.headers.get('Authorization'))
+        return FronteggContext(user.get('sub'), user.get('tenantId'))
     except:
-        return {
-            'user_id': None,
-            'tenant_id': None
-        }
-
+        return FronteggContext(None, None)
