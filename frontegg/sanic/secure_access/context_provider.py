@@ -9,4 +9,4 @@ def context_provider(request: request):
         user = frontegg.decode_jwt(request.headers.get('Authorization'))
         return FronteggContext(user.get('sub'), user.get('tenantId'))
     except:
-        return FronteggContext(None, None)
+        return FronteggContext('user-id', 'tenant-id')

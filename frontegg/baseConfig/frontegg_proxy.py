@@ -80,9 +80,9 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
 
     def set_context(self, headers: dict, request) -> dict:
         context = self.context_callback(request)
-        if context.tenant_id:
+        if context.tenant_id != None:
             headers[frontegg_headers['tenant_id']] = context.tenant_id
-        if context.user_id:
+        if context.user_id != None:
             headers[frontegg_headers['user_id']] = context.user_id
 
         return headers
