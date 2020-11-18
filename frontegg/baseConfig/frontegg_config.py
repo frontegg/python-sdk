@@ -1,11 +1,12 @@
 import typing
+from frontegg import FronteggContext
 
 
 class FronteggConfig():
     client_id: str = None
     api_key: str = None
 
-    def __init__(self, client_id: str, api_key, context_provider: typing.Callable = None,
+    def __init__(self, client_id: str, api_key, context_provider=None,
                  authentication_middleware=None, middleware_prefix: str = None):
         if client_id is None:
             raise Exception('client_id is required')
@@ -20,7 +21,8 @@ class FronteggConfig():
         self.authentication_middleware = authentication_middleware
 
         # why call "frontegg/" as well? to enable overriding the fix_middleware_prefix func with suitable func for the web framework
-        self.middleware_prefix = self.fix_middleware_prefix_format(middleware_prefix or 'frontegg/')
+        self.middleware_prefix = self.fix_middleware_prefix_format(
+            middleware_prefix or 'frontegg/')
 
     def fix_middleware_prefix_format(self, prefix: str):
         if prefix.startswith('/'):
