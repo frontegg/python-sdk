@@ -27,12 +27,13 @@ def with_authentication(
                     valid_permissions = any(
                         permission in decoded['permissions'] for permission in permission_keys)
 
-                if valid_permissions and valid_roles:
-                    return f(*args, **kwargs)
-                abort(403)
+                if not valid_permissions or not valid_roles:
+                    abort(403)
+                    return
             except:
                 abort(401)
 
+            return f(*args, **kwargs)
         return decorated_function
 
     return decorator
