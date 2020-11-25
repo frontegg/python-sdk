@@ -71,6 +71,7 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
         else:
             context_callback = context_provider
 
+        auth_middleware = None
         if app.config.get('FRONTEGG_AUTHENTICATION_MIDDLEWARE'):
             auth_middleware = app.config['FRONTEGG_AUTHENTICATION_MIDDLEWARE']
 
