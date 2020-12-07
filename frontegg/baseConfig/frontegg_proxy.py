@@ -69,14 +69,18 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
     def clean_response_headers(self, headers: dict) -> dict:
         new_headers = dict()
 
-        ignored_headers = ['access-control-allow-credentials',
-                           'access-control-allow-origin']
+        ignored_headers = self.ignored_response_headers
 
         for key, value in headers.items():
             if key.lower() not in ignored_headers:
                 new_headers[key] = value
 
         return new_headers
+
+    @property
+    def ignored_response_headers(self):
+        return ['access-control-allow-credentials', 'access-control-allow-origin']
+
 
     def set_context(self, headers: dict, request) -> dict:
         context = self.context_callback(request)

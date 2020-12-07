@@ -50,7 +50,7 @@ class FronteggFlaskClient(BaseFronteggClient[Request]):
 class frontegg(AuditsClientMixin, IdentityClientMixin):
     """Frontegg Flask Extension.
 
-    >>> from flask import Flask
+    >>> from flask2 import Flask
     >>> app.config['FRONTEGG_CLIENT_ID'] = '00000000-0000-0000-0000-000000000000'
     >>> app.config['FRONTEGG_API_KEY'] = 'api-key'
     >>> app.config['FRONTEGG_CONTEXT_RESOLVER'] = lambda: ('me@example.com', 'tenant-id')
@@ -64,7 +64,7 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
         If an app is provided, then the extension is registered to the app.
         Otherwise, call :meth:`frontegg.Frontegg.init_app`.
 
-        :param app: The flask application to extend.
+        :param app: The flask2 application to extend.
         """
         if app.config.get('FRONTEGG_CONTEXT_RESOLVER'):
             context_callback = app.config['FRONTEGG_CONTEXT_RESOLVER']
@@ -90,13 +90,13 @@ class frontegg(AuditsClientMixin, IdentityClientMixin):
 
     @property
     def _config(self) -> dict:
-        """The current flask app's configuration"""
+        """The current flask2 app's configuration"""
         return current_app.config
 
     def init_frontegg_app(self, app: Flask) -> None:
         """Initialize the extension for the app.
 
-        :param app: The flask application to extend.
+        :param app: The flask2 application to extend.
         """
         frontegg_api_gateway_url = os.environ.get(
             'FRONTEGG_API_GATEWAY_URL', 'https://api.frontegg.com/')

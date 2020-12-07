@@ -1,9 +1,9 @@
-import frontegg.flask
+import frontegg.flask2
 from flask import abort
 
 
 def authentication_middleware(req):
     try:
-        frontegg.flask.frontegg.decode_jwt()
+        frontegg.flask2.frontegg.decode_jwt()
     except:
         abort(401)

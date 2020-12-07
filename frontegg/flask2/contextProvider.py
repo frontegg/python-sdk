@@ -1,5 +1,5 @@
 from frontegg import FronteggContext
-import frontegg.flask
+import frontegg.flask2
 
 
 def context_provider(request):

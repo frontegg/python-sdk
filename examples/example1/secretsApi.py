@@ -1,5 +1,5 @@
 from flask import Blueprint
-from frontegg.flask import with_authentication
+from frontegg.flask2 import with_authentication
 
 secretsApi = Blueprint('secretsApi', __name__)
 
