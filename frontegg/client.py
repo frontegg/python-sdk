@@ -52,8 +52,10 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
     def __init__(self,
                  client_id: str,
                  api_key: str,
-                 context_callback: typing.Optional[typing.Callable[[RequestT], FronteggContext]] = None,
-                 auth_middleware: typing.Callable[[RequestT], FronteggContext] = None,
+                 context_callback: typing.Optional[typing.Callable[[
+                     RequestT], FronteggContext]] = None,
+                 auth_middleware: typing.Callable[[
+                     RequestT], FronteggContext] = None,
                  ) -> None:
         """Initialize the Frontegg client.
 
@@ -98,7 +100,8 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
     def routes_config(self):
         if self.__routes_config:
             return self.__routes_config
-        response = self.request(urljoin(self.base_url, '/configs/routes'), 'GET')
+        response = self.request(
+            urljoin(self.base_url, '/configs/routes'), 'GET')
 
         self.__routes_config = response.json()
         return self.__routes_config
@@ -128,9 +131,6 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
                     continue
             return True
         return False
-
-
-
 
     @property
     @abstractmethod
@@ -176,6 +176,7 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
                 params: typing.Optional[dict] = None,
                 tenant_id: typing.Optional[str] = None,
                 host: typing.Optional[str] = None,
+                is_vendor_request: typing.Optional[bool] = False,
                 headers: typing.Optional[dict] = {}) -> requests.Response:
         """Perform a request to Frontegg's API.
 
@@ -208,7 +209,7 @@ class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
         newHeaders['x-access-token'] = self.api_token
         newHeaders['frontegg-vendor-host'] = host
 
-        if tenant_id:
+        if tenant_id and not is_vendor_request:
             newHeaders['frontegg-tenant-id'] = tenant_id
         if user_id:
             newHeaders['frontegg-user-id'] = user_id

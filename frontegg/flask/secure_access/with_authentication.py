@@ -27,7 +27,6 @@ def with_authentication(
                         permission in decoded['permissions'] for permission in permission_keys)
 
             except Exception as e:
-                print(e)
                 abort(401)
 
             if not valid_permissions or not valid_roles:

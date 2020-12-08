@@ -269,12 +269,12 @@ class IdentityClientMixin(metaclass=ABCMeta):
                         'resources/configurations/v1'])
         response = self._client.request(
             url,
-            'GET'
+            'GET',
+            is_vendor_request=True
         )
         data = response.json()
         self.__publicKey = data.get('publicKey')
         return self.__publicKey
-
 
     def decode_jwt(self, verify: typing.Optional[bool] = True):
         authorization_header = request.headers.get('Authorization')
@@ -285,7 +285,6 @@ class IdentityClientMixin(metaclass=ABCMeta):
             public_key = self.getPublicKey()
             decoded = jwt.decode(jwt_token, public_key, algorithms='RS256')
         else:
-            decoded = jwt.decode(jwt_token, algorithms='RS256', verify = False)
+            decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False)
         request.user = decoded
         return decoded
-
