@@ -1,7 +1,7 @@
-from functools import wraps
 import typing
-from . import frontegg
-from flask import abort, Response
+from functools import wraps
+import frontegg.flask as __frontegg
+from flask import request, abort
 
 
 def with_authentication(
@@ -11,12 +11,11 @@ def with_authentication(
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            # Initially
+            valid_permissions = True
+            valid_roles = True
             try:
-                decoded = frontegg.decode_jwt()
-
-                # Initially
-                valid_permissions = True
-                valid_roles = True
+                decoded = __frontegg.frontegg.decode_jwt(request.headers.get('Authorization'))
 
                 # Validate roles
                 if (role_keys != None):
@@ -27,13 +26,16 @@ def with_authentication(
                     valid_permissions = any(
                         permission in decoded['permissions'] for permission in permission_keys)
 
-                if not valid_permissions or not valid_roles:
-                    abort(403)
-                    return
-            except:
+            except Exception as e:
+                print(e)
                 abort(401)
 
+            if not valid_permissions or not valid_roles:
+                abort(403)
+                return
+
             return f(*args, **kwargs)
+
         return decorated_function
 
     return decorator

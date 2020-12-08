@@ -7,6 +7,7 @@ from frontegg.helpers.exceptions import HttpException
 from .identity_mixin import IdentityClientMixin
 
 
+
 class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
     __routes_config = None
 
@@ -84,11 +85,12 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
 
     def set_context(self, headers: dict, request) -> dict:
         context = self.context_callback(request)
-        if context.tenant_id != None:
+        if context.tenant_id is not None:
             headers[frontegg_headers['tenant_id']] = context.tenant_id
-        if context.user_id != None:
+        if context.user_id is not None:
             headers[frontegg_headers['user_id']] = context.user_id
-
+        if context.permissions is not None:
+            headers[frontegg_headers['permissions']] = ','.join(context.permissions)
         return headers
 
     @property

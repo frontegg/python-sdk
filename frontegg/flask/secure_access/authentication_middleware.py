@@ -1,4 +1,6 @@
-from flask import request
+from flask import Request
+from frontegg.helpers.exceptions import UnauthenticatedException
+import frontegg.flask as __frontegg
 
 
 def authentication_middleware(request: Request):
