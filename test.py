@@ -7,17 +7,18 @@ from flask_cors import CORS
 app = Flask('example1')
 CORS(app, supports_credentials=True)
 
+clientId = os.environ['FRONTEGG_CLIENT_ID']
+apiKey = os.environ['FRONTEGG_API_KEY']
 
-
-frontegg.init_app(app=app, client_id='697cf7dc-848c-4195-b86c-ac8e08d5bf1f',
-                  api_key='303af577-d565-4209-95e0-5ad8f4e3c0c9', context_provider=context_provider_with_permissions,
+frontegg.init_app(app=app, client_id=clientId, api_key=apiKey, context_provider=context_provider_with_permissions,
                   authentication_middleware=authentication_middleware)
 
 
 @app.route('/secret')
-@with_authentication(role_keys=['delete'], permission_keys=['dsadsa'])
+@with_authentication(role_keys=['readonly'])
 def cool():
     return make_response('here is a secret - python is lit!', 200)
+
 
 
 app.run(port=8080)
