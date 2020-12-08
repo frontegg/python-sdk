@@ -26,7 +26,6 @@ class Frontegg(FronteggProxy):
 
         @frontegg_blueprint.route('/<path:endpoint>', methods=('GET', 'POST', 'PUT', 'DELETE', 'PATCH'))
         def middleware(endpoint):
-            print(endpoint)
             o = urlparse(request.base_url)
             response = self.proxy_request(request, method=request.method, path=request.path, host=o.hostname,
                                           params=request.args, body=request.data, cookies=request.cookies,
