@@ -2,7 +2,7 @@ from frontegg.baseConfig.frontegg_config import FronteggConfig
 import requests
 from frontegg.helpers.frontegg_urls import frontegg_urls
 import arrow
-
+from frontegg.helpers.logger import logger
 
 class FronteggAuthenticator(FronteggConfig):
     __access_token = None
@@ -27,10 +27,12 @@ class FronteggAuthenticator(FronteggConfig):
             'clientId': self.client_id,
             'secret': self.api_key
         }
+        logger.info('will refresh vendor token')
         auth_url = frontegg_urls.authentication_service['authenticate_vendor']
-        auth_response = self.vendor_session_request.post(auth_url, json=body)
 
+        auth_response = self.vendor_session_request.post(auth_url, json=body)
         auth_response.raise_for_status()
+        logger.info('got new vendor token from frontegg')
         response_body = auth_response.json()
         self.__access_token = response_body['token']
         self.__access_token_expiration = arrow.utcnow().shift(
@@ -38,3 +40,5 @@ class FronteggAuthenticator(FronteggConfig):
 
         self.vendor_session_request.headers.update(
             {'x-access-token': self.__access_token})
+
+        logger.info('new vendor token was set successfully')

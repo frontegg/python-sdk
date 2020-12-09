@@ -2,7 +2,7 @@ import typing
 from functools import wraps
 import frontegg.flask as __frontegg
 from flask import request, abort
-
+from frontegg.helpers.logger import logger
 
 def with_authentication(
         permission_keys: typing.Optional[list] = None,
@@ -19,19 +19,26 @@ def with_authentication(
 
                 # Validate roles
                 if (role_keys != None):
+                    logger.info('will check if entity has one of required roles')
                     valid_roles = any(
                         role in decoded['roles'] for role in role_keys)
 
+
                 if (permission_keys != None):
+                    logger.info('will check if entity has one of required permissions')
                     valid_permissions = any(
                         permission in decoded['permissions'] for permission in permission_keys)
 
             except Exception as e:
+                logger.debug('something went wrong while validating roles and permissions, ' + str(e))
                 abort(401)
 
             if not valid_permissions or not valid_roles:
+                logger.info('entity does not have required role and permissions')
                 abort(403)
                 return
+
+            logger.info('entity passed authentication middleware')
 
             return f(*args, **kwargs)
 
