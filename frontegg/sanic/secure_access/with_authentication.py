@@ -1,7 +1,8 @@
 import typing
 from functools import wraps
 from sanic.exceptions import abort
-from frontegg.sanic.frontegg import frontegg
+import frontegg.sanic as __frontegg
+from frontegg.helpers.logger import logger
 
 
 def with_authentication(
@@ -10,28 +11,37 @@ def with_authentication(
 ):
     def decorator(f):
         @wraps(f)
-        def decorated_function(*args, **kwargs):
+        def decorated_function(request, *args, **kwargs):
+            # Initially
+            valid_permissions = True
+            valid_roles = True
             try:
-                decoded = frontegg.decode_jwt()
-
-                # Initially
-                valid_permissions = True
-                valid_roles = True
+                header = request.headers.get('authorization')
+                decoded = __frontegg.frontegg.decode_jwt(header)
 
                 # Validate roles
-                if (role_keys != None):
+                if role_keys is not None:
+                    logger.info('will check if entity has one of required roles')
                     valid_roles = any(
                         role in decoded['roles'] for role in role_keys)
 
-                if (permission_keys != None):
+                if permission_keys is not None:
+                    logger.info('will check if entity has one of required permissions')
                     valid_permissions = any(
                         permission in decoded['permissions'] for permission in permission_keys)
 
-                if valid_permissions and valid_roles:
-                    return f(*args, **kwargs)
-                abort(403)
-            except:
+            except Exception as e:
+                logger.debug('something went wrong while validating roles and permissions, ' + str(e))
                 abort(401)
+
+            if not valid_permissions or not valid_roles:
+                logger.info('entity does not have required role and permissions')
+                abort(403)
+                return
+
+            logger.info('entity passed authentication middleware')
+
+            return f(request, *args, **kwargs)
 
         return decorated_function
 

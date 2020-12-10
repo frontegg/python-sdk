@@ -5,8 +5,8 @@ from frontegg.flask.secure_access import context_provider_with_permissions, auth
 from flask_cors import CORS
 from frontegg.helpers.logger import logger
 import logging
-
 logger.setLevel(logging.DEBUG)
+
 app = Flask('example1')
 CORS(app, supports_credentials=True)
 

@@ -9,7 +9,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/test-sanic.py",
-      // "program": "${workspaceFolder}/test.py",
+      // "program": "${workspaceFolder}/test-flask.py",
       "console": "integratedTerminal"
     }
   ]

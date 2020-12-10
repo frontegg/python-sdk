@@ -1,11 +1,11 @@
 from sanic import request
 from frontegg.helpers.exceptions import UnauthenticatedException
-from frontegg.sanic.frontegg import frontegg
+import frontegg.sanic as __frontegg
 
 
 def authentication_middleware(request: request):
     try:
-        frontegg.decode_jwt(
+        __frontegg.frontegg.decode_jwt(
             request.headers.get('Authorization'))
         return None
     except:
