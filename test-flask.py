@@ -3,9 +3,11 @@ from flask import Flask, make_response
 from frontegg.flask import frontegg
 from frontegg.flask.secure_access import context_provider_with_permissions, authentication_middleware, with_authentication
 from flask_cors import CORS
-from frontegg.helpers.logger import logger
+from frontegg import frontegg_logger
 import logging
-logger.setLevel(logging.DEBUG)
+
+
+frontegg_logger.setLevel(logging.DEBUG)
 
 app = Flask('example1')
 CORS(app, supports_credentials=True)

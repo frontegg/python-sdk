@@ -1,4 +1,5 @@
 from sanic import Sanic
+import os
 from frontegg.sanic import frontegg
 from frontegg.sanic.secure_access import context_provider_with_permissions, with_authentication
 from sanic_cors import CORS

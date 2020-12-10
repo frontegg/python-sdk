@@ -29,3 +29,18 @@ Frontegg Slack SDK support the following liberies, and more to come:
 
 *If you could not find the libary you are looking for here, please [contact us](https://frontegg.com/contact) and let us know :)*
 
+
+## Debugging
+Frontegg use the python 3 built in [loggin libary](https://docs.python.org/3/library/logging.html) to log useful debugging information.
+
+In order to had those logs you can add the environment variable "FRONTEGG_DEBUG":
+```
+FRONTEGG_DEBUG=True
+``` 
+Or configure it in the app itself:
+```
+from frontegg import frontegg_logger
+import logging
+
+frontegg_logger.setLevel(logging.DEBUG)
+```
