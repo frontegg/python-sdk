@@ -23,9 +23,9 @@ pip install frontegg
 ## Supported Liberies
 Frontegg Slack SDK support the following liberies, and more to come:
 
- - [Flask](flask)
- - [FastAPI](fastapi)
- - [Sanic](sanic)
+ - [Flask](frontegg/flask)
+ - [FastAPI](frontegg/fastapi)
+ - [Sanic](frontegg/sanic)
 
 *If you could not find the libary you are looking for here, please [contact us](https://frontegg.com/contact) and let us know :)*
 
