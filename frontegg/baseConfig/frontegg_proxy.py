@@ -40,7 +40,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
             except HttpException as response:
                 logger.info('failed to authorize entity')
                 return response
-            except as e:
+            except Exception as e:
                 logger.info('something went wrong, could not run authentication middleware')
                 logger.debug('auth middleware error - %s', str(e))
                 return HttpException('Something went wrong', 500)
