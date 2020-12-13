@@ -15,7 +15,7 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 authors = ["Frontegg LTD <hello@frontegg.com>"]
-readme = "README.md"
+readme = "README_PYPI.rst"
 
 [tool.poetry.dependencies]
 python = "^3.6"
