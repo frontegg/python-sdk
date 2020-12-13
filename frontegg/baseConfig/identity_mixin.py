@@ -23,7 +23,7 @@ class IdentityClientMixin(metaclass=ABCMeta):
             self.__publicKey = data.get('publicKey')
             return self.__publicKey
         except Exception as e:
-            logger.debug('could not get public key from frontegg, ' + str(e))
+            logger.error('could not get public key from frontegg, ' + str(e))
 
     def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
         if not authorization_header:
