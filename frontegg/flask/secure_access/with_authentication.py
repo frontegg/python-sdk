@@ -3,6 +3,7 @@ from functools import wraps
 import frontegg.flask as __frontegg
 from flask import request, abort
 from frontegg.helpers.logger import logger
+from flask import g
 
 
 def with_authentication(
@@ -17,7 +18,7 @@ def with_authentication(
             valid_roles = True
             try:
                 decoded = __frontegg.frontegg.decode_jwt(request.headers.get('Authorization'))
-
+                g.user = decoded
                 # Validate roles
                 if role_keys is not None:
                     logger.info('will check if entity has one of required roles')

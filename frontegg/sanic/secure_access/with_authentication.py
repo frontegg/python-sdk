@@ -11,14 +11,14 @@ def with_authentication(
 ):
     def decorator(f):
         @wraps(f)
-        def decorated_function(request, *args, **kwargs):
+        def decorated_function(*args, **kwargs):
             # Initially
             valid_permissions = True
             valid_roles = True
             try:
-                header = request.headers.get('authorization')
+                header = args[0].headers.get('authorization')
                 decoded = __frontegg.frontegg.decode_jwt(header)
-
+                args[0].ctx.user = decoded
                 # Validate roles
                 if role_keys is not None:
                     logger.info('will check if entity has one of required roles')
@@ -41,7 +41,7 @@ def with_authentication(
 
             logger.info('entity passed authentication middleware')
 
-            return f(request, *args, **kwargs)
+            return f(*args, **kwargs)
 
         return decorated_function
 
