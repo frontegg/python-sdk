@@ -1,29 +1,30 @@
 import os
-from flask import Flask, make_response
+from flask import Flask
 from frontegg.flask import frontegg
-from frontegg.flask.secure_access import context_provider_with_permissions, authentication_middleware, with_authentication
+from frontegg.flask.secure_access import context_provider_with_permissions, authentication_middleware, with_authentication, context_provider
 from flask_cors import CORS
 from frontegg import frontegg_logger
 import logging
+from flask import g
 
 
 frontegg_logger.setLevel(logging.DEBUG)
 
-app = Flask('example1')
+app = Flask()
 CORS(app, supports_credentials=True)
 
-clientId = os.environ['FRONTEGG_CLIENT_ID']
-apiKey = os.environ['FRONTEGG_API_KEY']
+client_id = os.environ['FRONTEGG_CLIENT_ID']
+api_key = os.environ['FRONTEGG_API_KEY']
 
 
 
-frontegg.init_app(app=app, client_id=clientId, api_key=apiKey, context_provider=context_provider_with_permissions, with_secure_access=True)
+frontegg.init_app(app=app, client_id=client_id, api_key=api_key, context_provider=context_provider_with_permissions, with_secure_access=True)
 
 
 @app.route('/secret')
-@with_authentication(role_keys=['readonly'])
+@with_authentication()
 def cool():
-    return make_response('here is a secret - python is lit!', 200)
+    return g.user
 
 
 
