@@ -16,6 +16,8 @@ pyjwt = "*"
 cryptography = "*"
 fastapi = "*"
 uvicorn = "*"
+sanic = "*"
+sanic-cors = "*"
 
 [requires]
 python_version = "3.8"

@@ -21,7 +21,7 @@ class FronteggContext:
     def __init__(self,
                  user_id: str,
                  tenant_id: str,
-                 permissions: typing.List[FronteggPermissions] = (FronteggPermissions.All,)) -> None:
+                 permissions: typing.List[str] = None) -> None:
         """
 
         :param user_id:
@@ -41,7 +41,7 @@ class FronteggContext:
         return self._tenant_id
 
     @property
-    def permissions(self) -> typing.List[FronteggPermissions]:
+    def permissions(self) -> typing.List[str]:
         return self._permissions
 
 

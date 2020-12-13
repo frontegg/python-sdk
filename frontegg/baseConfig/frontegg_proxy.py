@@ -5,6 +5,7 @@ import typing
 from frontegg.helpers.frontegg_headers import frontegg_headers
 from frontegg.helpers.exceptions import HttpException
 from .identity_mixin import IdentityClientMixin
+from frontegg.helpers.logger import logger
 
 
 class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
@@ -25,24 +26,38 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
         path_without_frontegg = path.replace(
             '/'+self.middleware_prefix, '', 1).replace(self.middleware_prefix, '', 1)
 
+        logger.info('removed path prefix before sending to frontegg, new path - %s', path_without_frontegg)
+
         public_route = self.is_public_route(
             path_without_frontegg, params, method)
 
+        logger.info('route is %s public route', '' if public_route else 'not')
+
         if self.authentication_middleware is not None and not public_route:
             try:
+                logger.info('will validate user authentication')
                 self.authentication_middleware(request)
             except HttpException as response:
+                logger.info('failed to authorize entity')
                 return response
             except:
+                logger.info('something went wrong, could not run authentication middleware')
+                logger.debug('auth middleware error - %s', str(e))
                 return HttpException('Something went wrong', 500)
 
         url = urljoin(frontegg_urls.base_url, path_without_frontegg)
         headers = self.clean_request_headers(headers, host)
         headers = self.set_context(headers, request)
+        logger.info('adjusted headers before proxying request to frontegg')
+        logger.debug('new headers - %s', str(headers))
 
         if self.should_refresh_vendor_token:
+            logger.info('refresh vendor token is required, will refresh token')
             self.refresh_vendor_token()
 
+
+        logger.info('will proxy request to frontegg')
+        logger.debug('request data: method=%s, url=%s,cookies=%s, body=%s, params=%s, headers=%s',method, url, str(cookies), str(body), str(params), str(headers))
         response = self.vendor_session_request.request(
             method,
             url,
@@ -51,6 +66,8 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
             data=body,
             params=params
         )
+
+        logger.info('got response from frontegg')
 
         response.headers = self.clean_response_headers(response.headers)
 
@@ -69,8 +86,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
     def clean_response_headers(self, headers: dict) -> dict:
         new_headers = dict()
 
-        ignored_headers = ['access-control-allow-credentials',
-                           'access-control-allow-origin']
+        ignored_headers = self.ignored_response_headers
 
         for key, value in headers.items():
             if key.lower() not in ignored_headers:
@@ -78,13 +94,19 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
 
         return new_headers
 
+    @property
+    def ignored_response_headers(self):
+        return ['access-control-allow-credentials', 'access-control-allow-origin']
+
+
     def set_context(self, headers: dict, request) -> dict:
         context = self.context_callback(request)
-        if context.tenant_id != None:
+        if context.tenant_id is not None:
             headers[frontegg_headers['tenant_id']] = context.tenant_id
-        if context.user_id != None:
+        if context.user_id is not None:
             headers[frontegg_headers['user_id']] = context.user_id
-
+        if context.permissions is not None:
+            headers[frontegg_headers['permissions']] = ','.join(context.permissions)
         return headers
 
     @property

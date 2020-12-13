@@ -1,5 +1,4 @@
-import typing
-from frontegg import FronteggContext
+from ..helpers.logger import logger
 
 
 class FronteggConfig():
@@ -14,6 +13,8 @@ class FronteggConfig():
             raise Exception('api_key is required')
         if context_provider is None:
             raise Exception('context_provider is required')
+        if authentication_middleware is None:
+            logger.warning('authentication middleware was not provided. In order to protect frontegg routes, it is recommended to provide authentication_middleware which validates the authentication of the user.')
 
         self.client_id = client_id
         self.api_key = api_key

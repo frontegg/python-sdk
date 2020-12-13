@@ -2,7 +2,7 @@ import pytest
 from flask import Flask
 
 from frontegg.client import FronteggContext
-from frontegg.flask.flask import Frontegg
+from frontegg.flask2.flask import Frontegg
 
 
 def create_app():

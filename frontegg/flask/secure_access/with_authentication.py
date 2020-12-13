@@ -1,7 +1,7 @@
 import typing
 from functools import wraps
-from sanic.exceptions import abort
-import frontegg.sanic as __frontegg
+import frontegg.flask as __frontegg
+from flask import request, abort
 from frontegg.helpers.logger import logger
 
 
@@ -11,13 +11,12 @@ def with_authentication(
 ):
     def decorator(f):
         @wraps(f)
-        def decorated_function(request, *args, **kwargs):
+        def decorated_function(*args, **kwargs):
             # Initially
             valid_permissions = True
             valid_roles = True
             try:
-                header = request.headers.get('authorization')
-                decoded = __frontegg.frontegg.decode_jwt(header)
+                decoded = __frontegg.frontegg.decode_jwt(request.headers.get('Authorization'))
 
                 # Validate roles
                 if role_keys is not None:
@@ -41,7 +40,7 @@ def with_authentication(
 
             logger.info('entity passed authentication middleware')
 
-            return f(request, *args, **kwargs)
+            return f(*args, **kwargs)
 
         return decorated_function
 
