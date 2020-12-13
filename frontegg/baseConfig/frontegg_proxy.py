@@ -24,7 +24,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
             raise Exception('path is required')
 
         path_without_frontegg = path.replace(
-            '/'+self.middleware_prefix, '', 1).replace(self.middleware_prefix, '', 1)
+            '/' + self.middleware_prefix, '', 1).replace(self.middleware_prefix, '', 1)
 
         logger.info('removed path prefix before sending to frontegg, new path - %s', path_without_frontegg)
 
@@ -40,7 +40,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
             except HttpException as response:
                 logger.info('failed to authorize entity')
                 return response
-            except:
+            except as e:
                 logger.info('something went wrong, could not run authentication middleware')
                 logger.debug('auth middleware error - %s', str(e))
                 return HttpException('Something went wrong', 500)
@@ -55,9 +55,9 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
             logger.info('refresh vendor token is required, will refresh token')
             self.refresh_vendor_token()
 
-
         logger.info('will proxy request to frontegg')
-        logger.debug('request data: method=%s, url=%s,cookies=%s, body=%s, params=%s, headers=%s',method, url, str(cookies), str(body), str(params), str(headers))
+        logger.debug('request data: method=%s, url=%s,cookies=%s, body=%s, params=%s, headers=%s', method, url,
+                     str(cookies), str(body), str(params), str(headers))
         response = self.vendor_session_request.request(
             method,
             url,
@@ -101,6 +101,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
 
     def set_context(self, headers: dict, request) -> dict:
         context = self.context_callback(request)
+        headers[frontegg_headers['middleware_request']] = True
         if context.tenant_id is not None:
             headers[frontegg_headers['tenant_id']] = context.tenant_id
         if context.user_id is not None:
