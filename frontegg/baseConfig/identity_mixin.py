@@ -27,7 +27,7 @@ class IdentityClientMixin(metaclass=ABCMeta):
                 reties = reties + 1
                 logger.error('could not get public key from frontegg, retry number - ' + str(reties) + ', ' + str(e))
 
-        logger.error('failed to get public ket in all retries, will throw error')
+        logger.error('failed to get public key in all retries')
 
     def fetch_public_key(self) -> str:
         response = self.vendor_session_request.get(frontegg_urls.identity_service['vendor_config'])
