@@ -1,27 +1,53 @@
 from fastapi.security.base import SecurityBase
 from fastapi import Request, Depends, HTTPException
-from typing import Optional
+from typing import Optional, Any, Dict, List
 from jwt import InvalidTokenError
 import frontegg
 from pydantic import BaseModel, Field
-from typing import List
 from fastapi.security.http import HTTPBearerModel
+import enum
+
+
+class TokenType(str, enum.Enum):
+    UserToken = 'userToken'
+    UserApiToken = 'userApiToken'
+    TenantApiToken = 'tenantApiToken'
 
 
 class User(BaseModel):
+    # Fields which are general for all kind of tokens
     sub: str
-    name: str
-    email: str
-    email_verified: bool
     roles: List[str] = Field(default_factory=list)
     permissions: List[str] = Field(default_factory=list)
     tenant_id: str = Field(alias='tenantId')
-    tenant_ids: List[str] = Field(alias='tenantIds', default_factory=list)
-    profile_picture_url: str = Field(alias='profilePictureUrl')
+    metadata: Dict[str, Any]
+    token_type: TokenType = Field(alias='type')
     access_token: str
+
+    # User token fields - all fields must be optional in order to support API tokens
+    name: Optional[str]
+    email: Optional[str]
+    email_verified: Optional[bool]
+    tenant_ids: Optional[List[str]] = Field(alias='tenantIds', default_factory=list)
+    profile_picture_url: Optional[str] = Field(alias='profilePictureUrl')
+
+    # API Token fields - all fields must be optional in order to support user tokens
+    created_by_user_id: Optional[str] = Field(alias='createdByUserId')
 
     def has_permissions(self, permissions: List[str]) -> bool:
         return bool(permissions) and all(p in self.permissions for p in permissions)
+
+    @property
+    def id(self) -> Optional[str]:
+        """
+        When using tenant API Token, there is no user ID.
+        When using user API Token, the user ID specified in the created_by_user_id field.
+        Otherwise, the user ID is specified in the sub field.
+        """
+        if self.token_type == TokenType.TenantApiToken:
+            return None
+
+        return self.created_by_user_id or self.sub
 
 
 class FronteggHTTPAuthentication(SecurityBase):
