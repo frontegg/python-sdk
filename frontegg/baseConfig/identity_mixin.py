@@ -16,27 +16,37 @@ class IdentityClientMixin(metaclass=ABCMeta):
     def get_public_key(self) -> str:
         if self.__publicKey:
             return self.__publicKey
+
         logger.info('could not find public key locally, will fetch public key')
-        try:
-            response = self.vendor_session_request.get(frontegg_urls.identity_service['vendor_config'])
-            data = response.json()
-            self.__publicKey = data.get('publicKey')
-            return self.__publicKey
-        except Exception as e:
-            logger.error('could not get public key from frontegg, ' + str(e))
+        reties = 0
+        while reties < 10:
+            try:
+                self.__publicKey = self.fetch_public_key()
+                return self.__publicKey
+            except Exception as e:
+                reties = reties + 1
+                logger.error('could not get public key from frontegg, retry number - ' + str(reties) + ', ' + str(e))
+
+        logger.error('failed to get public key in all retries')
+
+    def fetch_public_key(self) -> str:
+        response = self.vendor_session_request.get(frontegg_urls.identity_service['vendor_config'])
+        response.raise_for_status()
+        data = response.json()
+        return data.get('publicKey')
 
     def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
         if not authorization_header:
             raise Exception('Authorization headers is missing')
-        logger.debug('found authorization header: '+ str(authorization_header))
+        logger.debug('found authorization header: ' + str(authorization_header))
         jwt_token = authorization_header.replace('Bearer ', '')
         if verify:
             public_key = self.get_public_key()
-            logger.debug('got public key' +str(public_key))
+            logger.debug('got public key' + str(public_key))
             decoded = jwt.decode(jwt_token, public_key, algorithms='RS256')
         else:
             decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False)
 
         logger.info('jwt was decoded successfully')
-        logger.debug('JWT value - '+ str(decoded))
+        logger.debug('JWT value - ' + str(decoded))
         return decoded
