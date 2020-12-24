@@ -5,12 +5,22 @@ import jwt
 import requests
 from frontegg.helpers.logger import logger
 
+
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
 
     @property
     @abstractmethod
     def vendor_session_request(self) -> requests.Session:
+        pass
+
+    @property
+    @abstractmethod
+    def should_refresh_vendor_token(self) -> bool:
+        pass
+
+    @abstractmethod
+    def refresh_vendor_token(self) -> None:
         pass
 
     def get_public_key(self) -> str:
@@ -25,12 +35,18 @@ class IdentityClientMixin(metaclass=ABCMeta):
                 return self.__publicKey
             except Exception as e:
                 reties = reties + 1
-                logger.error('could not get public key from frontegg, retry number - ' + str(reties) + ', ' + str(e))
+                logger.error(
+                    'could not get public key from frontegg, retry number - ' + str(reties) + ', ' + str(e))
 
         logger.error('failed to get public key in all retries')
 
     def fetch_public_key(self) -> str:
-        response = self.vendor_session_request.get(frontegg_urls.identity_service['vendor_config'])
+
+        if self.should_refresh_vendor_token:
+            self.refresh_vendor_token()
+
+        response = self.vendor_session_request.get(
+            frontegg_urls.identity_service['vendor_config'])
         response.raise_for_status()
         data = response.json()
         return data.get('publicKey')
@@ -38,7 +54,8 @@ class IdentityClientMixin(metaclass=ABCMeta):
     def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
         if not authorization_header:
             raise Exception('Authorization headers is missing')
-        logger.debug('found authorization header: ' + str(authorization_header))
+        logger.debug('found authorization header: ' +
+                     str(authorization_header))
         jwt_token = authorization_header.replace('Bearer ', '')
         if verify:
             public_key = self.get_public_key()

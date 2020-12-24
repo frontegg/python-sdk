@@ -10,22 +10,21 @@ from flask import g
 
 frontegg_logger.setLevel(logging.DEBUG)
 
-app = Flask()
+app = Flask('my-app')
 CORS(app, supports_credentials=True)
 
 client_id = os.environ['FRONTEGG_CLIENT_ID']
 api_key = os.environ['FRONTEGG_API_KEY']
 
 
-
-frontegg.init_app(app=app, client_id=client_id, api_key=api_key, context_provider=context_provider_with_permissions, with_secure_access=True)
+frontegg.init_app(app=app, client_id=client_id, api_key=api_key,
+                  context_provider=context_provider_with_permissions, with_secure_access=True)
 
 
 @app.route('/secret')
 @with_authentication()
 def cool():
     return g.user
-
 
 
 app.run(port=8080)
