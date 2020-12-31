@@ -31,7 +31,7 @@ class Frontegg(FronteggProxy):
             methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
             include_in_schema=False,
         )
-        async def proxy_application(
+        async def proxy_frontegg_requests(
                 application_path: str,
                 request: Request,
         ) -> Response:
