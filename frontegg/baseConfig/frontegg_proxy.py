@@ -6,7 +6,8 @@ from frontegg.helpers.frontegg_headers import frontegg_headers
 from frontegg.helpers.exceptions import HttpException
 from .identity_mixin import IdentityClientMixin
 from frontegg.helpers.logger import logger
-
+from werkzeug.datastructures import Headers
+from http.cookies import SimpleCookie
 
 class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
     __routes_config = None
@@ -84,7 +85,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
         return new_headers
 
     def clean_response_headers(self, headers: dict) -> dict:
-        new_headers = dict()
+        new_headers = Headers()
 
         ignored_headers = self.ignored_response_headers
 
@@ -93,11 +94,12 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
                 continue
 
             if key == "set-cookie":
-                cookies = value.split(",")
-                for c in cookies:
-                    new_headers[key] = c
+                cookie = SimpleCookie()
+                cookie.load(value)
+                for cookieKey, morsel in cookie.items():
+                    new_headers.add(key, morsel.OutputString())
             else:
-                new_headers[key] = value
+                new_headers.add(key, value)
 
         return new_headers
 

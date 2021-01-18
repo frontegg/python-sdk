@@ -18,6 +18,7 @@ fastapi = "*"
 uvicorn = "*"
 sanic = "*"
 sanic-cors = "*"
+werkzeug = "*"
 
 [requires]
 python_version = "3.8"
