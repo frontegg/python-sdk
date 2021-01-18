@@ -89,7 +89,14 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
         ignored_headers = self.ignored_response_headers
 
         for key, value in headers.items():
-            if key.lower() not in ignored_headers:
+            if key.lower() in ignored_headers:
+                continue
+
+            if key == "set-cookie":
+                cookies = value.split(",")
+                for c in cookies:
+                    new_headers[key] = c
+            else:
                 new_headers[key] = value
 
         return new_headers
