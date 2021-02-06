@@ -1,11 +1,12 @@
 from fastapi.security.base import SecurityBase
 from fastapi import Request, Depends, HTTPException
 from typing import Optional, Any, Dict, List
-from jwt import InvalidTokenError
+from jwt import PyJWTError
 import frontegg
 from pydantic import BaseModel, Field
 from fastapi.security.http import HTTPBearerModel
 import enum
+from frontegg.helpers.logger import logger
 
 
 class TokenType(str, enum.Enum):
@@ -59,18 +60,24 @@ class FronteggHTTPAuthentication(SecurityBase):
         self.scheme_name = scheme_name or self.__class__.__name__
         self.auto_error = auto_error
 
+    def handle_authentication_failure(self):
+        if self.auto_error:
+            raise HTTPException(
+                status_code=401, detail="Unauthenticated"
+            )
+        else:
+            return None
+
     async def __call__(self, request: Request) -> Optional[User]:
         authorization: str = request.headers.get("Authorization")
         try:
             decoded = frontegg.fastapi.frontegg.decode_jwt(authorization)
             return User(**decoded, access_token=authorization.replace('Bearer ', ''))
-        except InvalidTokenError:
-            if self.auto_error:
-                raise HTTPException(
-                    status_code=401, detail="Unauthenticated"
-                )
-            else:
-                return None
+        except PyJWTError:
+            self.handle_authentication_failure()
+        except Exception as e:
+            logger.warning(f"Cought unexpected exception when decoding user's token: {repr(e)}")
+            self.handle_authentication_failure()
 
 
 def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True):  # noqa
