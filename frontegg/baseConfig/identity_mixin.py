@@ -4,6 +4,7 @@ import typing
 import jwt
 import requests
 from frontegg.helpers.logger import logger
+from jwt import InvalidTokenError
 
 
 class IdentityClientMixin(metaclass=ABCMeta):
@@ -53,7 +54,7 @@ class IdentityClientMixin(metaclass=ABCMeta):
 
     def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
         if not authorization_header:
-            raise Exception('Authorization headers is missing')
+            raise InvalidTokenError('Authorization headers is missing')
         logger.debug('found authorization header: ' +
                      str(authorization_header))
         jwt_token = authorization_header.replace('Bearer ', '')
