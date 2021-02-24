@@ -3,6 +3,7 @@ from frontegg.baseConfig.frontegg_proxy import FronteggProxy
 import typing
 import frontegg.fastapi.secure_access as secure_access
 from fastapi.concurrency import run_in_threadpool
+from frontegg.helpers import frontegg_urls
 
 
 class Frontegg(FronteggProxy):
@@ -38,6 +39,10 @@ class Frontegg(FronteggProxy):
             body = await request.body()
             host = request.headers.get('host') or request.client.host
             host = host.split(':')[0]
+
+            if application_path == 'identity/resources/auth/v1/user':
+                request.state.auth = await request.json()
+
             response = await run_in_threadpool(
                 self.proxy_request,
                 request=request, method=request.method, path=application_path,
