@@ -97,7 +97,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
                 cookie = SimpleCookie()
                 cookie.load(value)
                 for cookieKey, morsel in cookie.items():
-                    new_headers.add(key, morsel.OutputString())
+                    new_headers.add(key, morsel.OutputString().replace(',', ''))
             else:
                 new_headers.add(key, value)
 
