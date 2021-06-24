@@ -61,9 +61,9 @@ class IdentityClientMixin(metaclass=ABCMeta):
         if verify:
             public_key = self.get_public_key()
             logger.debug('got public key' + str(public_key))
-            decoded = jwt.decode(jwt_token, public_key, algorithms='RS256')
+            decoded = jwt.decode(jwt_token, public_key, algorithms='RS256', options={"verify_aud": False})
         else:
-            decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False)
+            decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False, options={"verify_aud": False})
 
         logger.info('jwt was decoded successfully')
         logger.debug('JWT value - ' + str(decoded))
