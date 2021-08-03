@@ -143,7 +143,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
                     if not value:
                         is_valid = False
                         break
-                    if query_param['value'] and value != query_param['value']:
+                    if query_param.get('value') and value != query_param['value']:
                         is_valid = False
                         break
 
