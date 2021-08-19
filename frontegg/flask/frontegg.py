@@ -39,7 +39,7 @@ class Frontegg(FronteggProxy):
                                           params=request.args, body=request.data, cookies=request.cookies,
                                           headers=dict(request.headers))
 
-            logger.info('got response from frontegg: status_code = %s, path = %s', response.status_code, request.path)
+            logger.info('got response from frontegg: status_code = %s, path = %s, traceId = %s', response.status_code, request.path, response.headers.get('frontegg-trace-id'))
 
             return make_response(response.content, response.status_code, response.headers)
 

@@ -31,7 +31,7 @@ def with_authentication(
                         permission in decoded['permissions'] for permission in permission_keys)
 
             except Exception as e:
-                logger.debug('something went wrong while validating roles and permissions, ' + str(e))
+                logger.info('something went wrong while validating JWT, ' + str(e))
                 abort(401)
 
             if not valid_permissions or not valid_roles:
