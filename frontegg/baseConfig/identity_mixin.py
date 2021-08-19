@@ -5,7 +5,10 @@ import jwt
 import requests
 from frontegg.helpers.logger import logger
 from jwt import InvalidTokenError
+from frontegg.helpers.retry import retry
+import os
 
+jwt_decode_retry = os.environ.get('FRONTEGG_JWT_DECODE_RETRY') or 1
 
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
@@ -52,19 +55,23 @@ class IdentityClientMixin(metaclass=ABCMeta):
         data = response.json()
         return data.get('publicKey')
 
+
     def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
         if not authorization_header:
             raise InvalidTokenError('Authorization headers is missing')
         logger.debug('found authorization header: ' +
                      str(authorization_header))
         jwt_token = authorization_header.replace('Bearer ', '')
-        if verify:
-            public_key = self.get_public_key()
-            logger.debug('got public key' + str(public_key))
-            decoded = jwt.decode(jwt_token, public_key, algorithms='RS256', options={"verify_aud": False})
-        else:
-            decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False, options={"verify_aud": False})
-
+        public_key = self.get_public_key()
+        logger.debug('got public key' + str(public_key))
+        decoded = self.__get_jwt_data(jwt_token, verify, public_key)
         logger.info('jwt was decoded successfully')
         logger.debug('JWT value - ' + str(decoded))
         return decoded
+
+
+    @retry(action='decode jwt', total_tries=jwt_decode_retry)
+    def __get_jwt_data(self, jwt_token, verify, public_key):
+        if verify:
+            return jwt.decode(jwt_token, public_key, algorithms='RS256', options={"verify_aud": False})
+        return jwt.decode(jwt_token, algorithms='RS256', verify=verify, options={"verify_aud": False})
