@@ -10,6 +10,8 @@ import os
 
 jwt_decode_retry = os.environ.get('FRONTEGG_JWT_DECODE_RETRY') or '1'
 jwt_decode_retry = int(jwt_decode_retry)
+jwt_decode_retry_delay = os.environ.get('FRONTEGG_JWT_DECODE_RETRY_DELAY_MS') or '0'
+jwt_decode_retry_delay = float(jwt_decode_retry_delay)/1000
 
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
@@ -71,7 +73,7 @@ class IdentityClientMixin(metaclass=ABCMeta):
         return decoded
 
 
-    @retry(action='decode jwt', total_tries=jwt_decode_retry)
+    @retry(action='decode jwt', total_tries=jwt_decode_retry, retry_delay=jwt_decode_retry_delay)
     def __get_jwt_data(self, jwt_token, verify, public_key):
         if verify:
             return jwt.decode(jwt_token, public_key, algorithms='RS256', options={"verify_aud": False})
