@@ -8,7 +8,8 @@ from jwt import InvalidTokenError
 from frontegg.helpers.retry import retry
 import os
 
-jwt_decode_retry = os.environ.get('FRONTEGG_JWT_DECODE_RETRY') or 1
+jwt_decode_retry = os.environ.get('FRONTEGG_JWT_DECODE_RETRY') or '1'
+jwt_decode_retry = int(jwt_decode_retry)
 
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
