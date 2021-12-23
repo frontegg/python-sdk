@@ -1,8 +1,7 @@
 import typing
 from abc import ABCMeta, abstractmethod
 from urllib.parse import urlsplit, urlunsplit
-import jwt
-from flask import request
+
 
 
 def _get_filters(count, filter, filters, offset, sort_by, sort_direction):
@@ -251,40 +250,3 @@ class SSOClientMixin(metaclass=ABCMeta):
             json=saml_response
         )
         return response.json()
-
-
-class IdentityClientMixin(metaclass=ABCMeta):
-    __publicKey = None
-
-    @property
-    @abstractmethod
-    def _config(self) -> dict:
-        """A dictionary containing the configuration for Frontegg."""
-        pass
-
-    def getPublicKey(self) -> str:
-        if self.__publicKey:
-            return self.__publicKey
-        url = '/'.join([self._config['FRONTEGG_IDENTITY_SERVICE_URL'],
-                        'resources/configurations/v1'])
-        response = self._client.request(
-            url,
-            'GET',
-            is_vendor_request=True
-        )
-        data = response.json()
-        self.__publicKey = data.get('publicKey')
-        return self.__publicKey
-
-    def decode_jwt(self, verify: typing.Optional[bool] = True):
-        authorization_header = request.headers.get('Authorization')
-        if not authorization_header:
-            raise Exception('Authorization headers is missing')
-        jwt_token = authorization_header.replace('Bearer ', '')
-        if verify:
-            public_key = self.getPublicKey()
-            decoded = jwt.decode(jwt_token, public_key, algorithms='RS256')
-        else:
-            decoded = jwt.decode(jwt_token, algorithms='RS256', verify=False)
-        request.user = decoded
-        return decoded
