@@ -105,7 +105,7 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
 
     @property
     def ignored_response_headers(self):
-        return ['access-control-allow-credentials', 'access-control-allow-origin']
+        return ['access-control-allow-credentials', 'access-control-allow-origin', 'content-encoding']
 
 
     def set_context(self, headers: dict, request) -> dict:
