@@ -47,7 +47,7 @@ class Frontegg(FronteggProxy):
 
     @property
     def ignored_response_headers(self):
-        return ['content-length', 'access-control-allow-credentials', 'access-control-allow-origin']
+        return ['content-length', 'access-control-allow-credentials', 'access-control-allow-origin', 'content-encoding']
 
 
 
