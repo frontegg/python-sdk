@@ -76,5 +76,5 @@ class IdentityClientMixin(metaclass=ABCMeta):
     @retry(action='decode jwt', total_tries=jwt_decode_retry, retry_delay=jwt_decode_retry_delay)
     def __get_jwt_data(self, jwt_token, verify, public_key):
         if verify:
-            return jwt.decode(jwt_token, public_key, algorithms='RS256', options={"verify_aud": False})
-        return jwt.decode(jwt_token, algorithms='RS256', verify=verify, options={"verify_aud": False})
+            return jwt.decode(jwt_token, public_key, algorithms=['RS256'], options={"verify_aud": False})
+        return jwt.decode(jwt_token, algorithms=['RS256'], options={"verify_aud": False, "verify_signature": verify})
