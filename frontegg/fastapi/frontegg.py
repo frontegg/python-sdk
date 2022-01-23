@@ -44,7 +44,10 @@ class Frontegg(FronteggProxy):
                 host=host, body=body, headers=request.headers,
                 params=request.query_params
             )
-            return Response(content=response.content, status_code=response.status_code, headers=response.headers)
+            fast_api_response = Response(content=response.content, status_code=response.status_code, headers=response.headers)
+            for cookieKey in response.cookies.keys():
+                fast_api_response.headers.append('set-cookie', response.cookies.get(cookieKey).OutputString())
+            return fast_api_response
 
 
 frontegg = Frontegg()
