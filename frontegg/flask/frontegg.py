@@ -41,7 +41,12 @@ class Frontegg(FronteggProxy):
 
             logger.info('got response from frontegg: status_code = %s, path = %s, traceId = %s', response.status_code, request.path, response.headers.get('frontegg-trace-id'))
 
-            return make_response(response.content, response.status_code, response.headers)
+            flask_response = make_response(response.content, response.status_code, response.headers)
+
+            for cookieKey in response.cookies.keys():
+                flask_response.headers.add_header('set-cookie', response.cookies.get(cookieKey).OutputString())
+
+            return flask_response
 
         app.register_blueprint(frontegg_blueprint)
 
