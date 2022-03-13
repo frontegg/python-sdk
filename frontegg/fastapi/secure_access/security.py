@@ -38,6 +38,9 @@ class User(BaseModel):
     def has_permissions(self, permissions: List[str]) -> bool:
         return bool(permissions) and all(p in self.permissions for p in permissions)
 
+    def has_roles(self, roles: List[str]) -> bool:
+        return bool(roles) and all(r in self.roles for r in roles)
+
     @property
     def id(self) -> Optional[str]:
         """
@@ -80,7 +83,7 @@ class FronteggHTTPAuthentication(SecurityBase):
             self.handle_authentication_failure()
 
 
-def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True):  # noqa
+def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True, roles: List[str] = None):  # noqa
     """
     This factory function will create authentication dependency for FastAPI,
     and will ensure the user has the right permissions if specified.
@@ -88,6 +91,8 @@ def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True):  #
 
     def check_perm(user: User = Depends(FronteggHTTPAuthentication(auto_error=auto_error))):
         if permissions and not user.has_permissions(permissions=permissions):
+            raise HTTPException(status_code=403, detail='You do not have permission to perform this action.')
+        if roles and not user.has_roles(roles=roles):
             raise HTTPException(status_code=403, detail='You do not have permission to perform this action.')
         return user
 
