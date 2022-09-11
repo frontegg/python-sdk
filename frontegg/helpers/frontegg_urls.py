@@ -15,6 +15,8 @@ class FronteggUrls():
 
     @property
     def base_url(self) -> str:
+        if not self.__base_url.endswith('/'):
+            self.__base_url = self.__base_url +'/'
         return self.__base_url
 
     @property
