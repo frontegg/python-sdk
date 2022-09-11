@@ -117,6 +117,10 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
             headers[frontegg_headers['user_id']] = context.user_id
         if context.permissions is not None:
             headers[frontegg_headers['permissions']] = ','.join(context.permissions)
+        if context.entity_type is not None:
+            headers[frontegg_headers['entity_type']] = context.entity_type
+        if context.entity_id is not None:
+            headers[frontegg_headers['entity_id']] = context.entity_id
         return headers
 
     @property

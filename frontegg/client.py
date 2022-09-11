@@ -16,21 +16,28 @@ RequestT = typing.TypeVar('RequestT')
 class FronteggContext:
     """Request context."""
 
-    __slots__ = ('_user_id', '_tenant_id', '_permissions')
+    __slots__ = ('_user_id', '_tenant_id', '_permissions', '_entity_type', '_entity_id')
 
     def __init__(self,
-                 user_id: str,
+                 user_id: typing.Union[str, None],
                  tenant_id: str,
-                 permissions: typing.List[str] = None) -> None:
+                 permissions: typing.List[str] = None,
+                 entity_type: str = None,
+                 entity_id: str = None,
+                 ) -> None:
         """
 
         :param user_id:
         :param tenant_id:
         :param permissions:
+        :param entity_type:
+        :param entity_id:
         """
         self._user_id = user_id
         self._tenant_id = tenant_id
         self._permissions = permissions
+        self._entity_type = entity_type
+        self._entity_id = entity_id
 
     @property
     def user_id(self) -> str:
@@ -43,6 +50,14 @@ class FronteggContext:
     @property
     def permissions(self) -> typing.List[str]:
         return self._permissions
+
+    @property
+    def entity_type(self) -> str:
+        return self._entity_type
+
+    @property
+    def entity_id(self) -> str:
+        return self._entity_id
 
 
 class BaseFronteggClient(typing.Generic[RequestT], metaclass=ABCMeta):
