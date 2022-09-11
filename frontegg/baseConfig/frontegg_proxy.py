@@ -47,6 +47,11 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
                 return HttpException('Something went wrong', 500)
 
         url = urljoin(frontegg_urls.base_url, path_without_frontegg)
+
+        if not url.startswith(frontegg_urls.base_url):
+            logger.info('base url was overridden, throwing exception')
+            return HttpException('Something went wrong', 500)
+
         headers = self.clean_request_headers(headers, host)
         headers = self.set_context(headers, request)
         logger.info('adjusted headers before proxying request to frontegg')
