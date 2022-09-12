@@ -90,11 +90,12 @@ class FronteggProxy(FronteggAuthenticator, IdentityClientMixin):
         return new_headers
 
     def get_cookies(self, headers: dict) -> SimpleCookie:
-        cookies = SimpleCookie()
-        if headers.get('set-cookie'):
-            cookies.load(headers.get('set-cookie'))
-            del headers['set-cookie']
-        return cookies
+        smpl_cookie = SimpleCookie()
+        cookie_header = headers.get('set-cookie')
+        if cookie_header:
+            smpl_cookie.load(cookie_header)
+            headers.pop('set-cookie')
+        return smpl_cookie
 
     def clean_response_headers(self, headers: structures.CaseInsensitiveDict) -> dict:
         new_headers = dict(headers)

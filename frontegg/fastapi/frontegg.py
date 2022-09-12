@@ -3,7 +3,7 @@ from frontegg.baseConfig.frontegg_proxy import FronteggProxy
 import typing
 import frontegg.fastapi.secure_access as secure_access
 from fastapi.concurrency import run_in_threadpool
-
+from requests import Response as ResponseType
 
 class Frontegg(FronteggProxy):
     def __init__(self):
@@ -45,8 +45,12 @@ class Frontegg(FronteggProxy):
                 params=request.query_params
             )
             fast_api_response = Response(content=response.content, status_code=response.status_code, headers=response.headers)
-            for cookieKey in response.cookies.keys():
-                fast_api_response.headers.append('set-cookie', response.cookies.get(cookieKey).OutputString())
+            if isinstance(response, ResponseType):
+                for cookieKey in response.cookies.keys():
+                    cookie_val = response.cookies.get(cookieKey).OutputString()
+                    if cookie_val.endswith(','):
+                        cookie_val = cookie_val[:-1]
+                    fast_api_response.headers.append('set-cookie',  cookie_val)
             return fast_api_response
 
 
