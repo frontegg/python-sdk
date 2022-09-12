@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 import typing
 from .secure_access import authentication_middleware as fe_auth_middleware, context_provider as fe_context_provider
 from frontegg.helpers.logger import logger
+from requests import Response as ResponseType
 
 class Frontegg(FronteggProxy):
     def __init__(self):
@@ -43,8 +44,12 @@ class Frontegg(FronteggProxy):
 
             flask_response = make_response(response.content, response.status_code, response.headers)
 
-            for cookieKey in response.cookies.keys():
-                flask_response.headers.add_header('set-cookie', response.cookies.get(cookieKey).OutputString())
+            if isinstance(response, ResponseType):
+                for cookieKey in response.cookies.keys():
+                    cookie_val = response.cookies.get(cookieKey).OutputString()
+                    if cookie_val.endswith(','):
+                        cookie_val = cookie_val[:-1]
+                    flask_response.headers.add_header('set-cookie', cookie_val)
 
             return flask_response
 
