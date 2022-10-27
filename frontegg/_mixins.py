@@ -3,7 +3,6 @@ from abc import ABCMeta, abstractmethod
 from urllib.parse import urlsplit, urlunsplit
 
 
-
 def _get_filters(count, filter, filters, offset, sort_by, sort_direction):
     if not filters:
         filters = {}

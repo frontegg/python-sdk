@@ -11,7 +11,8 @@ import os
 jwt_decode_retry = os.environ.get('FRONTEGG_JWT_DECODE_RETRY') or '1'
 jwt_decode_retry = int(jwt_decode_retry)
 jwt_decode_retry_delay = os.environ.get('FRONTEGG_JWT_DECODE_RETRY_DELAY_MS') or '0'
-jwt_decode_retry_delay = float(jwt_decode_retry_delay)/1000
+jwt_decode_retry_delay = float(jwt_decode_retry_delay) / 1000
+
 
 class IdentityClientMixin(metaclass=ABCMeta):
     __publicKey = None
@@ -52,12 +53,12 @@ class IdentityClientMixin(metaclass=ABCMeta):
         if self.should_refresh_vendor_token:
             self.refresh_vendor_token()
 
+        print(frontegg_urls.identity_service['vendor_config'])
         response = self.vendor_session_request.get(
             frontegg_urls.identity_service['vendor_config'])
         response.raise_for_status()
         data = response.json()
         return data.get('publicKey')
-
 
     def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
         if not authorization_header:
@@ -71,7 +72,6 @@ class IdentityClientMixin(metaclass=ABCMeta):
         logger.info('jwt was decoded successfully')
         logger.debug('JWT value - ' + str(decoded))
         return decoded
-
 
     @retry(action='decode jwt', total_tries=jwt_decode_retry, retry_delay=jwt_decode_retry_delay)
     def __get_jwt_data(self, jwt_token, verify, public_key):
