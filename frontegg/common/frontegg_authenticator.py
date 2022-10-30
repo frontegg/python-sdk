@@ -1,4 +1,4 @@
-from frontegg.base_config.frontegg_config import FronteggConfig
+from frontegg.common.frontegg_config import FronteggConfig
 import requests
 from frontegg.helpers.frontegg_urls import frontegg_urls
 import arrow
@@ -10,7 +10,7 @@ class FronteggAuthenticator(FronteggConfig):
     __access_token_expiration = None
     vendor_session_request = requests.session()
 
-    def __init__(self, client_id: str, api_key):
+    def __init__(self, client_id: str, api_key: str):
         super(FronteggAuthenticator, self).__init__(client_id, api_key)
         self.refresh_vendor_token()
 

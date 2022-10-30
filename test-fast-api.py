@@ -1,5 +1,5 @@
 from frontegg.fastapi import frontegg
-from frontegg.fastapi.secure_access import FronteggSecurity, User, context_provider_with_permissions
+from frontegg.fastapi.secure_access import FronteggSecurity, User
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -21,6 +21,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/")
 def read_root(user: User = Depends(FronteggSecurity())) -> User:

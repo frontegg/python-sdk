@@ -4,7 +4,7 @@ from typing import Dict
 
 
 class FronteggUrls:
-    __base_url = os.environ.get('FRONTEGG_API_GATEWAY_URL', 'https://api.frontegg.com/')
+    __base_url = os.environ.get('FRONTEGG_API_GATEWAY_URL', 'https://api.stg.frontegg.com/')
 
     def __init__(self):
         self.__authentication_base_url = os.environ.get('FRONTEGG_AUTHENTICATION_SERVICE_URL',
@@ -30,13 +30,8 @@ class FronteggUrls:
     @property
     def audits_service(self) -> Dict[str, str]:
         return {
-            'base_url': self.__audits_base_url
-        }
-
-    @property
-    def metadata_service(self) -> Dict[str, str]:
-        return {
-            'base_url': self.__metadata_base_url
+            'base_url': self.__audits_base_url,
+            'send_audits': ''
         }
 
     @property
@@ -45,10 +40,6 @@ class FronteggUrls:
             'base_url': self.__identity_base_url,
             'vendor_config': urljoin(self.__identity_base_url, 'resources/configurations/v1/')
         }
-
-    @property
-    def routes_config(self) -> str:
-        return urljoin(self.__base_url, '/configs/routes')
 
 
 frontegg_urls = FronteggUrls()
