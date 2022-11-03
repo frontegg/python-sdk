@@ -53,7 +53,6 @@ class IdentityClientMixin(metaclass=ABCMeta):
         if self.should_refresh_vendor_token:
             self.refresh_vendor_token()
 
-        print(frontegg_urls.identity_service['vendor_config'])
         response = self.vendor_session_request.get(
             frontegg_urls.identity_service['vendor_config'])
         response.raise_for_status()
