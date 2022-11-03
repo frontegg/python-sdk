@@ -1,12 +1,10 @@
-import os
 from flask import Flask
 from frontegg.flask import frontegg
-from frontegg.flask.secure_access import context_provider_with_permissions, authentication_middleware, with_authentication, context_provider
+from frontegg.flask.secure_access import with_authentication
 from flask_cors import CORS
 from frontegg import frontegg_logger
 import logging
 from flask import g
-
 
 frontegg_logger.setLevel(logging.DEBUG)
 
@@ -17,8 +15,7 @@ client_id = os.environ['FRONTEGG_CLIENT_ID']
 api_key = os.environ['FRONTEGG_API_KEY']
 
 
-frontegg.init_app(app=app, client_id=client_id, api_key=api_key,
-                  context_provider=context_provider_with_permissions, with_secure_access=True)
+frontegg.init_app(client_id=client_id, api_key=api_key)
 
 
 @app.route('/secret')
@@ -27,4 +24,9 @@ def cool():
     return g.user
 
 
-app.run(port=8080)
+@app.route('/public')
+def hello():
+    return 'Hello'
+
+
+app.run(host="localhost", port=8080)
