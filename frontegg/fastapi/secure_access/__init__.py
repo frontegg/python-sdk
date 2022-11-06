@@ -1,4 +1,3 @@
-from .security import FronteggHTTPAuthentication, FronteggSecurity, User
-from .authentication_middleware import authentication_middleware
+from .frontegg_security import FronteggHTTPAuthentication, FronteggSecurity, User
 
-__all__ = ('FronteggHTTPAuthentication', 'FronteggSecurity', 'authentication_middleware', 'User')
+__all__ = ('FronteggHTTPAuthentication', 'FronteggSecurity', 'User')

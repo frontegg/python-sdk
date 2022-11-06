@@ -1,4 +1,4 @@
-from frontegg.base_config import FronteggAuthenticator, IdentityClientMixin
+from frontegg.common import FronteggAuthenticator, IdentityClientMixin
 
 
 class Frontegg(FronteggAuthenticator, IdentityClientMixin):
