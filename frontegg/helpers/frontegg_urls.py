@@ -4,7 +4,7 @@ from typing import Dict
 
 
 class FronteggUrls:
-    __base_url = os.environ.get('FRONTEGG_API_GATEWAY_URL', 'https://api.stg.frontegg.com/')
+    __base_url = os.environ.get('FRONTEGG_API_GATEWAY_URL', 'https://api.frontegg.com/')
 
     def __init__(self):
         self.__authentication_base_url = os.environ.get('FRONTEGG_AUTHENTICATION_SERVICE_URL',
