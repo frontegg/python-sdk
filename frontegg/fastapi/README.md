@@ -1,13 +1,18 @@
-<p align="center">  
-  <a href="https://www.frontegg.com/" rel="noopener" target="_blank">  
-    <img style="margin-top:40px" height="50" src="https://frontegg.com/wp-content/uploads/2020/04/logo_frrontegg.svg" alt="Frontegg logo">  
-  </a>  
-</p>  
-<h1 align="center">Frontegg Python SDK - FastAPI</h1>  
-  
-  
-[Frontegg](https://frontegg.com/) is a web platform where SaaS companies can set up their fully managed, scalable and brand aware - SaaS features and integrate them into their SaaS portals in up to 5 lines of code.  
-  
+<br />
+<div align="center">
+<img src="https://fronteggstuff.blob.core.windows.net/frongegg-logos/logo-transparent.png" alt="Frontegg Logo" width="400" height="90">
+
+<h3 align="center">Frontegg Node.js Client</h3>
+
+  <p align="center">
+    Frontegg is a web platform where SaaS companies can set up their fully managed, scalable and brand aware - SaaS features and integrate them into their SaaS portals in up to 5 lines of code.
+    <br />
+    <h3><a href="https://docs.frontegg.com/docs/using-frontegg-sdk"><strong>Explore the docs »</strong></a></h3>
+    <a href="https://github.com/frontegg/python-sdk/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/frontegg/python-sdk/issues">Request Feature</a>
+  </p>
+</div>
   
 # Requirements  
 
@@ -34,12 +39,11 @@ And then just add frontegg
 
     from frontegg.fastapi import frontegg
     from frontegg.fastapi.secure_access import context_provider
-    
-    
+
     fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
     fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
     
-    frontegg.init_app(app, fe_client_id, fe_api_key, context_provider)
+    frontegg.init_app(app, fe_client_id, fe_api_key)
     
 Great! Now you have frontegg up and running. 
 
@@ -49,15 +53,7 @@ In order to let Frontegg know who is the client that make each request and if it
 ## Using Secure Access
 If you are using [frontegg secure access](https://frontegg.com/secure-access-experience) you can just set the flag "*with_secure_access*" and we will handle the authorization and the authentication for you.
 
-    frontegg.init_app(app, fe_client_id, fe_api_key, with_secure_access=True)
-
-### Using frontegg permissions
-By default Frontegg provides a set of permissions for all of it's endpoints , after you assigned those permissions to your roles using [Frontegg portal](https://portal.frontegg.com/secure/rolesandpermissions/roles). You will be able to enforce them by setting the permissions context provider:
-
-    
-    from frontegg.fastapi.secure import context_provider_with_permissions as context_provider
-    
-    frontegg.init_app(app, fe_client_id, fe_api_key, context_provider, with_secure_access=True)
+    frontegg.init_app(app, fe_client_id, fe_api_key)
 
 ### Protecting routes
 When using Frontegg secure access. You get the ability to protect your routes using Frontegg authentication middleware:
@@ -69,36 +65,6 @@ When using Frontegg secure access. You get the ability to protect your routes us
 	    return user
 
 The function FronteggSecurity get the optional argument *permission_keys* to specify which permissions are required in order to access the route.
-
-## Authentication middleware
-> If you are using frontegg secure access you can skip this part
-
-In case you are not using Frontegg secure access, you will have to provide authentication middleware by yourself.
-For each request that is not a public request Frontegg will call this authentication middleware, here is an example:
- 
-    from fastapi import HTTPException
-    
-    def auth_middleware(request):
-	    if request.is_authenticated:
-		    return
-		else:
-		    raise HTTPException(status_code=401,  detail="Unauthenticated")
-
-
-## Context Provider
-
-> If you are using frontegg secure access you can skip this part
-
-For the authorization part, Frontegg will need to know by which user and on behalf of what tenant the request was made.
-
-You can handle it by passing *context_provider* function to Frontegg. For example:
-
-    from frontegg import FronteggContext
-    
-    def context_provider(request):
-	    if request.user:
-		    return FronteggContext(request.user.id, request.user.tenant_id)
-		    
 
 ## CORS (Cross-origin resource sharing)
 In order to use Frontegg, it is required that your app will know how to handle CORS.
