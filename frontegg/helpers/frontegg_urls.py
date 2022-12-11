@@ -2,21 +2,22 @@ import os
 from urllib.parse import urljoin
 from typing import Dict
 
-class FronteggUrls():
+
+class FronteggUrls:
     __base_url = os.environ.get('FRONTEGG_API_GATEWAY_URL', 'https://api.frontegg.com/')
 
     def __init__(self):
         self.__authentication_base_url = os.environ.get('FRONTEGG_AUTHENTICATION_SERVICE_URL',
-                                                                urljoin(self.base_url, 'auth/'))
+                                                        urljoin(self.base_url, 'auth/'))
         self.__audits_base_url = os.environ.get('FRONTEGG_AUDITS_SERVICE_URL',
-                                                        urljoin(self.base_url, 'audits/'))
+                                                urljoin(self.base_url, 'audits/'))
         self.__metadata_base_url = os.environ.get('FRONTEGG_METADATA_SERVICE_URL', urljoin(self.base_url, 'metadata/'))
         self.__identity_base_url = os.environ.get('FRONTEGG_IDENTITY_SERVICE_URL', urljoin(self.base_url, 'identity/'))
 
     @property
     def base_url(self) -> str:
         if not self.__base_url.endswith('/'):
-            self.__base_url = self.__base_url +'/'
+            self.__base_url = self.__base_url + '/'
         return self.__base_url
 
     @property
@@ -29,13 +30,8 @@ class FronteggUrls():
     @property
     def audits_service(self) -> Dict[str, str]:
         return {
-            'base_url': self.__audits_base_url
-        }
-
-    @property
-    def metadata_service(self) -> Dict[str, str]:
-        return {
-            'base_url': self.__metadata_base_url
+            'base_url': self.__audits_base_url,
+            'send_audits': ''
         }
 
     @property
@@ -45,9 +41,6 @@ class FronteggUrls():
             'vendor_config': urljoin(self.__identity_base_url, 'resources/configurations/v1/')
         }
 
-    @property
-    def routes_config(self)-> str:
-        return urljoin(self.__base_url, '/configs/routes')
 
 frontegg_urls = FronteggUrls()
 
