@@ -43,7 +43,7 @@ And then just add frontegg
     fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
     fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
     
-    frontegg.init_app(app, fe_client_id, fe_api_key)
+    frontegg.init_app(fe_client_id, fe_api_key)
     
 Great! Now you have frontegg up and running. 
 
@@ -53,7 +53,7 @@ In order to let Frontegg know who is the client that make each request and if it
 ## Using Secure Access
 If you are using [frontegg secure access](https://frontegg.com/secure-access-experience) you can just set the flag "*with_secure_access*" and we will handle the authorization and the authentication for you.
 
-    frontegg.init_app(app, fe_client_id, fe_api_key)
+    frontegg.init_app(fe_client_id, fe_api_key)
 
 ### Protecting routes
 When using Frontegg secure access. You get the ability to protect your routes using Frontegg authentication middleware:
@@ -65,6 +65,31 @@ When using Frontegg secure access. You get the ability to protect your routes us
 	    return user
 
 The function FronteggSecurity get the optional argument *permission_keys* to specify which permissions are required in order to access the route.
+
+### Access tokens
+
+When using M2M authentication, access tokens will be cached by the SDK.
+By default access tokens will be cached locally, however you can use one other kind of cache:
+
+- redis
+
+#### Use redis as your cache
+When initializing your context, pass an access tokens options object with your redis parameters
+
+    access_tokens_options = {
+      cache: {
+        type: 'redis',
+        options: {
+          host: 'localhost',
+          port: 6379,
+          password: '',
+          db: 10,
+        },
+      },
+    };
+    
+    frontegg.init_app(fe_client_id, fe_api_key, options)
+
 
 ## CORS (Cross-origin resource sharing)
 In order to use Frontegg, it is required that your app will know how to handle CORS.

@@ -1,12 +1,16 @@
-from abc import ABCMeta, abstractmethod
-from frontegg.helpers.frontegg_urls import frontegg_urls
-import typing
 import jwt
-import requests
-from frontegg.helpers.logger import logger
-from jwt import InvalidTokenError
-from frontegg.helpers.retry import retry
 import os
+from jwt import InvalidTokenError
+from typing import Optional
+from frontegg.helpers.frontegg_urls import frontegg_urls
+from frontegg.helpers.logger import logger
+from frontegg.helpers.retry import retry
+from frontegg.common.clients.token_resolvers.authorization_header_resolver import AuthorizationJWTResolver
+from frontegg.common.clients.token_resolvers.access_token_resolver import AccessTokenResolver
+from frontegg.common.clients.types import AuthHeaderType, IValidateTokenOptions
+from frontegg.common import FronteggAuthenticator
+from frontegg.helpers.exceptions import UnauthenticatedException
+
 
 jwt_decode_retry = os.environ.get('FRONTEGG_JWT_DECODE_RETRY') or '1'
 jwt_decode_retry = int(jwt_decode_retry)
@@ -14,22 +18,13 @@ jwt_decode_retry_delay = os.environ.get('FRONTEGG_JWT_DECODE_RETRY_DELAY_MS') or
 jwt_decode_retry_delay = float(jwt_decode_retry_delay) / 1000
 
 
-class IdentityClientMixin(metaclass=ABCMeta):
+class IdentityClientMixin:
     __publicKey = None
+    __tokenResolvers = []
 
-    @property
-    @abstractmethod
-    def vendor_session_request(self) -> requests.Session:
-        pass
-
-    @property
-    @abstractmethod
-    def should_refresh_vendor_token(self) -> bool:
-        pass
-
-    @abstractmethod
-    def refresh_vendor_token(self) -> None:
-        pass
+    def __init__(self, authenticator: FronteggAuthenticator):
+        self.__authenticator = authenticator;
+        self.__tokenResolvers = [AuthorizationJWTResolver(), AccessTokenResolver(authenticator)]
 
     def get_public_key(self) -> str:
         if self.__publicKey:
@@ -49,17 +44,47 @@ class IdentityClientMixin(metaclass=ABCMeta):
         logger.error('failed to get public key in all retries')
 
     def fetch_public_key(self) -> str:
+        if self.__authenticator.should_refresh_vendor_token:
+            self.__authenticator.refresh_vendor_token()
 
-        if self.should_refresh_vendor_token:
-            self.refresh_vendor_token()
-
-        response = self.vendor_session_request.get(
+        response = self.__authenticator.vendor_session_request.get(
             frontegg_urls.identity_service['vendor_config'])
         response.raise_for_status()
         data = response.json()
         return data.get('publicKey')
 
-    def decode_jwt(self, authorization_header, verify: typing.Optional[bool] = True):
+    def validate_identity_on_token(
+            self,
+            token,
+            options: Optional[IValidateTokenOptions] = None,
+            type=AuthHeaderType.JWT.value
+    ):
+        if type == AuthHeaderType.JWT.value:
+            try:
+                token = token.replace("Bearer ", "")
+            except:
+                logger.error("Failed to extract token - ", token)
+
+        public_key = None
+        try:
+            public_key = self.get_public_key()
+        except:
+            logger.error("Failed to get public key - ")
+            raise UnauthenticatedException()
+
+        resolver = None
+        for _resolver in self.__tokenResolvers:
+            if _resolver.should_handle(type) is True:
+                resolver = _resolver
+                break
+        if not resolver:
+            logger.error("Failed to find token resolver")
+            raise UnauthenticatedException()
+
+        entity = resolver.validate_token(token, public_key, options)
+        return entity
+
+    def decode_jwt(self, authorization_header, verify: Optional[bool] = True):
         if not authorization_header:
             raise InvalidTokenError('Authorization headers is missing')
         logger.debug('found authorization header: ' +
