@@ -4,6 +4,8 @@ import frontegg.flask as __frontegg
 from flask import request, abort
 from frontegg.helpers.logger import logger
 from flask import g
+from frontegg.common.clients.types import AuthHeaderType
+from frontegg.helpers.exceptions import UnauthorizedException
 
 
 def with_authentication(
@@ -14,30 +16,26 @@ def with_authentication(
         @wraps(f)
         def decorated_function(*args, **kwargs):
             # Initially
-            valid_permissions = True
-            valid_roles = True
             try:
-                decoded_user = __frontegg.frontegg.decode_jwt(request.headers.get('Authorization'))
-                g.user = decoded_user
-                # Validate roles
-                if role_keys is not None:
-                    logger.info('will check if entity has one of required roles')
-                    valid_roles = any(
-                        role in decoded_user['roles'] for role in role_keys)
+                auth_header = get_auth_header(request)
+                if auth_header is None:
+                    abort(401)
+                    return
 
-                if permission_keys is not None:
-                    logger.info('will check if entity has one of required permissions')
-                    valid_permissions = any(
-                        permission in decoded_user['permissions'] for permission in permission_keys)
+                decoded_user = __frontegg.frontegg.validate_identity_on_token(
+                    auth_header.get('token'),
+                    {'roles': role_keys, 'permissions': permission_keys},
+                    auth_header.get('type')
+                )
+                g.user = decoded_user
+
+            except UnauthorizedException:
+                logger.info('entity does not have required role and permissions')
+                abort(403)
 
             except Exception as e:
                 logger.info('something went wrong while validating JWT, ' + str(e))
                 abort(401)
-
-            if not valid_permissions or not valid_roles:
-                logger.info('entity does not have required role and permissions')
-                abort(403)
-                return
 
             logger.info('entity passed authentication middleware')
 
@@ -46,3 +44,15 @@ def with_authentication(
         return decorated_function
 
     return decorator
+
+
+def get_auth_header(req):
+    token = req.headers.get('Authorization')
+    if token is not None:
+        return {'token': token.replace('Bearer ', ''), 'type': AuthHeaderType.JWT.value}
+
+    token = req.headers.get('x-api-key');
+    if token is not None:
+        return {'token': token, 'type': AuthHeaderType.AccessToken.value}
+
+    return None
