@@ -38,7 +38,6 @@ First make sure that you have a fastAPI app
 And then just add frontegg
 
     from frontegg.fastapi import frontegg
-    from frontegg.fastapi.secure_access import context_provider
 
     fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
     fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
