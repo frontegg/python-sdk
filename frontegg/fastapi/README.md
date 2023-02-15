@@ -26,24 +26,20 @@
 
 With a few lines of code you can have frontegg up and running
 
-First make sure that you have a fastAPI app
-
-    from fastapi import FastAPI
-    import uvicorn
-    
-    app = FastAPI()
-	
-	uvicorn.run(app)
-
-And then just add frontegg
+Import and initialize Frontegg along with your FastApi Application
 
     from frontegg.fastapi import frontegg
+    from fastapi import FastAPI
+    import uvicorn
 
     fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
     fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
     
     frontegg.init_app(fe_client_id, fe_api_key)
-    
+
+    app = FastAPI()
+	uvicorn.run(app)
+
 Great! Now you have frontegg up and running. 
 
 # Authentication and Authorization
