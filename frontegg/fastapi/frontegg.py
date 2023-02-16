@@ -15,7 +15,7 @@ class Frontegg:
 
     @property
     def should_refresh_vendor_token(self) -> bool:
-        return self.authenticator.should_refresh_vendor_token()
+        return self.authenticator.should_refresh_vendor_token
 
     @property
     def access_token(self):
