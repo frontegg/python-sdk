@@ -71,11 +71,9 @@ class FronteggHTTPAuthentication(SecurityBase):
         self.roles = roles
         self.permissions = permissions
 
-    def handle_authentication_failure(self):
+    def handle_failure(self, exception):
         if self.auto_error:
-            raise HTTPException(
-                status_code=401, detail="Unauthenticated"
-            )
+            raise exception
         else:
             return None
 
@@ -83,7 +81,7 @@ class FronteggHTTPAuthentication(SecurityBase):
         try:
             auth_header = get_auth_header(request)
             if auth_header is None:
-                raise HTTPException(status_code=401, detail="Unauthenticated")
+                self.handle_failure(HTTPException(status_code=401, detail="Unauthenticated"))
 
             decoded_user = frontegg.fastapi.frontegg.validate_identity_on_token(
                 auth_header.get('token'),
@@ -94,12 +92,12 @@ class FronteggHTTPAuthentication(SecurityBase):
 
         except UnauthorizedException:
             logger.info('entity does not have required role and permissions')
-            raise HTTPException(status_code=403, detail='You do not have permission to perform this action.')
+            self.handle_failure(HTTPException(status_code=403, detail='You do not have permission to perform this action.'))
 
         except Exception as e:
             print(e)
             logger.info('something went wrong while validating JWT, ' + str(e))
-            raise HTTPException(status_code=401, detail="Unauthenticated")
+            self.handle_failure(HTTPException(status_code=401, detail="Unauthenticated"))
 
 
 def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True, roles: List[str] = None):  # noqa
@@ -119,7 +117,7 @@ def get_auth_header(req):
     if token is not None:
         return {'token': token.replace('Bearer ', ''), 'type': AuthHeaderType.JWT.value}
 
-    token = req.headers.get('x-api-key');
+    token = req.headers.get('x-api-key')
     if token is not None:
         return {'token': token, 'type': AuthHeaderType.AccessToken.value}
 
