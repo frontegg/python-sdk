@@ -99,7 +99,7 @@ class FronteggHTTPAuthentication(SecurityBase):
         except Exception as e:
             print(e)
             logger.info('something went wrong while validating JWT, ' + str(e))
-            raise HTTPException(status_code=401, detail="Unauthenticated")
+            return self.handle_authentication_failure()
 
 
 def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True, roles: List[str] = None):  # noqa
@@ -119,7 +119,7 @@ def get_auth_header(req):
     if token is not None:
         return {'token': token.replace('Bearer ', ''), 'type': AuthHeaderType.JWT.value}
 
-    token = req.headers.get('x-api-key');
+    token = req.headers.get('x-api-key')
     if token is not None:
         return {'token': token, 'type': AuthHeaderType.AccessToken.value}
 

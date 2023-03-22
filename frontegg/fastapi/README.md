@@ -43,12 +43,6 @@ Import and initialize Frontegg along with your FastApi Application
 Great! Now you have frontegg up and running. 
 
 # Authentication and Authorization
-In order to let Frontegg know who is the client that make each request and if it is authorized Frontegg will need you to provide additional data.
-
-## Using Secure Access
-If you are using [frontegg secure access](https://frontegg.com/secure-access-experience) you can just set the flag "*with_secure_access*" and we will handle the authorization and the authentication for you.
-
-    frontegg.init_app(fe_client_id, fe_api_key)
 
 ### Protecting routes
 When using Frontegg secure access. You get the ability to protect your routes using Frontegg authentication middleware:
@@ -103,3 +97,29 @@ It's easy to set up:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+## Working with the REST API
+Frontegg provides a comprehensive REST API for your application. 
+In order to use the API from your backend it is required to initialize the http client using your credentials
+
+    // define your base url
+    base_url = "https://api.frontegg.com/audits"
+    http_client = HttpClient(client_id=<YOUR_CLIENT_ID>, api_key=<YOUR_API_KEY>, base_url=base_url)
+
+The http client instance can now be used to make API requests to Frontegg's REST API (base on the provided base url)
+
+## Using Frontegg clients
+Frontegg provides various clients for seamless integration with the Frontegg API.
+
+For example, Frontegg’s Managed Audit Logs feature allows you to embed an end-to-end working feature in just 5 lines of code
+
+### creating a new Audits client
+
+    from frontegg.common.clients import AuditsClient, HttpClient, Severity
+
+    http_client = HttpClient(client_id=<YOUR_CLIENT_ID>, api_key=<YOUR_API_KEY>, base_url=frontegg_urls.audits_service['base_url'])
+    audits_client = AuditsClient(http_client)
+
+## Sending an audit using the newly created client
+
+    audits_client.send_audit(audit={'severity': Severity.INFO}, tenant_id="tenant-id")
