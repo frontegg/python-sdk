@@ -81,7 +81,7 @@ class FronteggHTTPAuthentication(SecurityBase):
         try:
             auth_header = get_auth_header(request)
             if auth_header is None:
-                self.handle_failure(HTTPException(status_code=401, detail="Unauthenticated"))
+                raise HTTPException(status_code=401, detail="Unauthenticated")
 
             decoded_user = frontegg.fastapi.frontegg.validate_identity_on_token(
                 auth_header.get('token'),
@@ -92,12 +92,12 @@ class FronteggHTTPAuthentication(SecurityBase):
 
         except UnauthorizedException:
             logger.info('entity does not have required role and permissions')
-            self.handle_failure(HTTPException(status_code=403, detail='You do not have permission to perform this action.'))
+            raise HTTPException(status_code=403, detail='You do not have permission to perform this action.')
 
         except Exception as e:
             print(e)
             logger.info('something went wrong while validating JWT, ' + str(e))
-            self.handle_failure(HTTPException(status_code=401, detail="Unauthenticated"))
+            return self.handle_failure(HTTPException(status_code=401, detail="Unauthenticated"))
 
 
 def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True, roles: List[str] = None):  # noqa
