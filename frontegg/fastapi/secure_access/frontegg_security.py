@@ -71,9 +71,11 @@ class FronteggHTTPAuthentication(SecurityBase):
         self.roles = roles
         self.permissions = permissions
 
-    def handle_failure(self, exception):
+    def handle_authentication_failure(self):
         if self.auto_error:
-            raise exception
+            raise HTTPException(
+                status_code=401, detail="Unauthenticated"
+            )
         else:
             return None
 
@@ -97,7 +99,7 @@ class FronteggHTTPAuthentication(SecurityBase):
         except Exception as e:
             print(e)
             logger.info('something went wrong while validating JWT, ' + str(e))
-            return self.handle_failure(HTTPException(status_code=401, detail="Unauthenticated"))
+            return self.handle_authentication_failure()
 
 
 def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True, roles: List[str] = None):  # noqa
