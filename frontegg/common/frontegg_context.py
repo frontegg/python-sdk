@@ -1,5 +1,5 @@
 from frontegg.common.package_utils import PackageUtils
-
+from frontegg.helpers.logger import logger
 
 class FronteggContext(object):
     _instance = None
@@ -7,7 +7,7 @@ class FronteggContext(object):
 
     def __new__(cls):
         if cls._instance is None:
-            print('Creating the object')
+            logger.debug('Creating a new frontegg context')
             cls._instance = super(FronteggContext, cls).__new__(cls)
             # Put any initialization here.
         return cls._instance
