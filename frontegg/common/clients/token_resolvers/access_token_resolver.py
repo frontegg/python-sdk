@@ -34,7 +34,7 @@ class AccessTokenResolver(TokenResolver[IEntityWithRoles]):
             self.validate_roles_and_permissions(entity_with_roles, options)
         else:
             active_ids = self.__get_active_access_token_ids(entity)
-            if entity.get('sub') not in active_ids:
+            if active_ids is None or entity.get('sub') not in active_ids:
                 raise UnauthenticatedException()
 
         return {**entity_with_roles, **entity}
@@ -55,7 +55,7 @@ class AccessTokenResolver(TokenResolver[IEntityWithRoles]):
             if _resolver.should_handle(type):
                 resolver = _resolver
                 break
-        if not resolver:
+        if resolver is None:
             logger.error("Failed to find token resolver")
             raise UnauthenticatedException()
 

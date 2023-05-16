@@ -44,7 +44,7 @@ class CacheAccessTokenService(abc.ABC, BaseAccessTokenService[T]):
         cache_key = self.get_cache_prefix() + '_ids'
         cached_data = self.active_access_tokens_cache_manager.get(cache_key)
 
-        if cached_data:
+        if cached_data is not None:
             return cached_data
 
         try:
@@ -54,6 +54,8 @@ class CacheAccessTokenService(abc.ABC, BaseAccessTokenService[T]):
             return data
         except UnauthenticatedException:
             self.active_access_tokens_cache_manager.set(cache_key, [], {'expires_in_seconds': 10})
+
+            return []
 
     def __is_empty_access_token(self, access_token) -> bool:
         return 'empty' in access_token and access_token['empty'] is True
