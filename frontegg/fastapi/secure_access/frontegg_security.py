@@ -97,8 +97,7 @@ class FronteggHTTPAuthentication(SecurityBase):
             raise HTTPException(status_code=403, detail='You do not have permission to perform this action.')
 
         except Exception as e:
-            print(e)
-            logger.info('something went wrong while validating JWT, ' + str(e))
+            logger.error('something went wrong while validating JWT, ' + str(e))
             return self.handle_authentication_failure()
 
 
