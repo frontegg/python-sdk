@@ -26,6 +26,8 @@ def prepare_headers(
 
 
 class HttpClient(FronteggAuthenticator):
+    timeout_in_seconds = 3
+
     def __init__(self, client_id: str, api_key: str, base_url: str):
         super(HttpClient, self).__init__(client_id=client_id, api_key=api_key)
         self.base_url = base_url
@@ -46,7 +48,7 @@ class HttpClient(FronteggAuthenticator):
         self.__prepare_auth_headers()
         new_headers = prepare_headers(tenant_id, host, headers)
 
-        return self.client.get(combineUrl(self.base_url, url), params=params, headers=new_headers)
+        return self.client.get(combineUrl(self.base_url, url), params=params, headers=new_headers, timeout=self.timeout_in_seconds)
 
     def post(self,
              data,
@@ -58,7 +60,7 @@ class HttpClient(FronteggAuthenticator):
         self.__prepare_auth_headers()
 
         new_headers = prepare_headers(tenant_id, host, headers)
-        return self.client.post(combineUrl(self.base_url, url), json=data, headers=new_headers)
+        return self.client.post(combineUrl(self.base_url, url), json=data, headers=new_headers, timeout=self.timeout_in_seconds)
 
     def put(self,
             data,
@@ -70,7 +72,7 @@ class HttpClient(FronteggAuthenticator):
         self.__prepare_auth_headers()
 
         new_headers = prepare_headers(tenant_id, host, headers)
-        return self.client.put(combineUrl(self.base_url, url), json=data, headers=new_headers)
+        return self.client.put(combineUrl(self.base_url, url), json=data, headers=new_headers, timeout=self.timeout_in_seconds)
 
     def delete(self,
                url: str = '',
@@ -81,7 +83,7 @@ class HttpClient(FronteggAuthenticator):
         self.__prepare_auth_headers()
 
         new_headers = prepare_headers(tenant_id, host, headers)
-        return self.client.delete(combineUrl(self.base_url, url), headers=new_headers)
+        return self.client.delete(combineUrl(self.base_url, url), headers=new_headers, timeout=self.timeout_in_seconds)
 
     def patch(self,
               data,
@@ -93,7 +95,7 @@ class HttpClient(FronteggAuthenticator):
         self.__prepare_auth_headers()
 
         new_headers = prepare_headers(tenant_id, host, headers)
-        return self.client.patch(combineUrl(self.base_url, url), json=data, headers=new_headers)
+        return self.client.patch(combineUrl(self.base_url, url), json=data, headers=new_headers, timeout=self.timeout_in_seconds)
 
 
 __all__ = 'HttpClient'

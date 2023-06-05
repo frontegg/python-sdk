@@ -48,7 +48,7 @@ class IdentityClientMixin:
             self.__authenticator.refresh_vendor_token()
 
         response = self.__authenticator.vendor_session_request.get(
-            frontegg_urls.identity_service['vendor_config'])
+            frontegg_urls.identity_service['vendor_config'], timeout=3)
         response.raise_for_status()
         data = response.json()
         return data.get('publicKey')
