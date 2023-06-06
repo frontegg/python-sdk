@@ -21,6 +21,7 @@ class UserAccessTokenService(AccessTokenService[IUserAccessToken]):
     def get_active_access_token_ids_from_identity(self) -> List[str]:
         response = self.client.get(
             urljoin(frontegg_urls.identity_service['base_url'], 'resources/vendor-only/users/access-tokens/v1/active'))
+        response.raise_for_status()
         data = response.json()
 
         return data
