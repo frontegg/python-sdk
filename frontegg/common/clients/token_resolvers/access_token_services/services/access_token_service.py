@@ -3,6 +3,7 @@ import json
 from typing import List, TypeVar, Union
 from frontegg.common.clients.types import IAccessToken, IEntityWithRoles, TokenTypes
 from frontegg.helpers.exceptions import UnauthenticatedException
+from frontegg.helpers.logger import logger
 from frontegg.common.clients.token_resolvers.access_token_services.base_access_token_service import \
     BaseAccessTokenService
 
@@ -18,8 +19,9 @@ class AccessTokenService(abc.ABC, BaseAccessTokenService[T]):
             data = self.get_entity_from_identity(entity)
             return data
         except Exception as e:
+            logger.exception('Failed to get entity from identity')
             if self.__is_api_tokens_disabled(e):
-                raise FailedToAuthenticateException()
+                raise UnauthenticatedException()
 
             raise e
 
@@ -27,6 +29,7 @@ class AccessTokenService(abc.ABC, BaseAccessTokenService[T]):
         try:
             return self.get_active_access_token_ids_from_identity()
         except Exception as e:
+            logger.exception('Failed to get active access token ids')
             if self.__is_api_tokens_disabled(e):
                 raise UnauthenticatedException()
 
