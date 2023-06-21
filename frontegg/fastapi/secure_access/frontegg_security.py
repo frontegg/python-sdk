@@ -35,6 +35,7 @@ class User(BaseModel):
     email_verified: Optional[bool]
     tenant_ids: Optional[List[str]] = Field(alias='tenantIds', default_factory=list)
     profile_picture_url: Optional[str] = Field(alias='profilePictureUrl')
+    super_user: Optional[bool] = Field(alias='superUser')
 
     # API Token fields - all fields must be optional in order to support user tokens
     created_by_user_id: Optional[str] = Field(alias='createdByUserId')

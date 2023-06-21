@@ -54,6 +54,7 @@ class IUser(IEntityWithRoles):
     email_verified: Optional[bool] = None
     invisible: Optional[bool] = None
     tenantId: str
+    superUser: Optional[bool]
 
 
 class IAccessToken(IEntity):
