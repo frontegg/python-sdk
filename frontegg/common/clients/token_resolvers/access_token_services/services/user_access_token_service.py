@@ -14,6 +14,7 @@ class UserAccessTokenService(AccessTokenService[IUserAccessToken]):
     def get_entity_from_identity(self, entity: IUserAccessToken) -> IEntityWithRoles:
         endpoint = urljoin('resources/vendor-only/users/access-tokens/v1/', entity.get('sub'))
         response = self.client.get(urljoin(frontegg_urls.identity_service['base_url'], endpoint))
+        response.raise_for_status()
         data = response.json()
 
         return {**entity, 'roles': data.get('roles'), 'permissions': data.get('permissions')}
