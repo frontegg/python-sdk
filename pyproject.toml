@@ -25,7 +25,7 @@ requests = "^2.28.2"
 arrow = "^1.2.3"
 aiohttp = {version = "^3.6.2", optional = true}
 PyJWT = "^2.6.0"
-cryptography = "^39.0.0"
+cryptography = ">=39,<42"
 typing-extensions = "^4.4.0"
 
 [tool.poetry.extras]
