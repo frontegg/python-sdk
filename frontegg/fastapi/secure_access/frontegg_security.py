@@ -1,6 +1,6 @@
 from fastapi.security.base import SecurityBase
 from fastapi import Request, Depends, HTTPException
-from typing import Optional, Any, Dict, List
+from typing import Optional, Any, Dict, List, Callable
 import frontegg
 from pydantic import BaseModel, Field
 from fastapi.security.http import HTTPBearerModel
@@ -9,7 +9,6 @@ from frontegg.helpers.logger import logger
 from frontegg.common.clients.types import AuthHeaderType
 from frontegg.helpers.exceptions import UnauthorizedException
 
-
 class TokenType(str, enum.Enum):
     UserToken = 'userToken'
     UserApiToken = 'userApiToken'
@@ -17,9 +16,8 @@ class TokenType(str, enum.Enum):
     TenantAccessToken = 'tenantAccessToken'
     UserAccessToken = 'userAccessToken'
 
-
 class User(BaseModel):
-    # Fields which are general for all kind of tokens
+    # Fields which are general for all kinds of tokens
     sub: str
     roles: List[str] = Field(default_factory=list)
     permissions: List[str] = Field(default_factory=list)
@@ -28,7 +26,7 @@ class User(BaseModel):
     token_type: TokenType = Field(alias='type')
     access_token: str
 
-    # User token fields - all fields must be optional in order to support API tokens
+    # User token fields - all fields must be optional to support API tokens
     metadata: Optional[Dict[str, Any]]
     name: Optional[str]
     email: Optional[str]
@@ -37,7 +35,7 @@ class User(BaseModel):
     profile_picture_url: Optional[str] = Field(alias='profilePictureUrl')
     super_user: Optional[bool] = Field(alias='superUser')
 
-    # API Token fields - all fields must be optional in order to support user tokens
+    # API Token fields - all fields must be optional to support user tokens
     created_by_user_id: Optional[str] = Field(alias='createdByUserId')
 
     def has_permissions(self, permissions: List[str]) -> bool:
@@ -50,7 +48,7 @@ class User(BaseModel):
     def id(self) -> Optional[str]:
         """
         When using tenant API Token, there is no user ID.
-        When using user API Token, the user ID specified in the created_by_user_id field.
+        When using user API Token, the user ID is specified in the created_by_user_id field.
         Otherwise, the user ID is specified in the sub field.
         """
         if self.token_type == TokenType.TenantApiToken:
@@ -58,11 +56,10 @@ class User(BaseModel):
 
         return self.created_by_user_id or self.sub
 
-
 class FronteggHTTPAuthentication(SecurityBase):
     def __init__(self,
                  bearerFormat: Optional[str] = None,  # noqa
-                 scheme_name: str = None,
+                 scheme_name: Optional[str] = None,
                  auto_error: bool = True,
                  roles: List[str] = [],
                  permissions: List[str] = []):
@@ -72,7 +69,7 @@ class FronteggHTTPAuthentication(SecurityBase):
         self.roles = roles
         self.permissions = permissions
 
-    def handle_authentication_failure(self):
+    def handle_authentication_failure(self) -> None:
         if self.auto_error:
             raise HTTPException(
                 status_code=401, detail="Unauthenticated"
@@ -101,20 +98,18 @@ class FronteggHTTPAuthentication(SecurityBase):
             logger.error('something went wrong while validating JWT, ' + str(e))
             return self.handle_authentication_failure()
 
-
-def FronteggSecurity(permissions: List[str] = None, auto_error: bool = True, roles: List[str] = None):  # noqa
+def FronteggSecurity(permissions: List[str] = [], auto_error: bool = True, roles: List[str] = []) -> Callable[[], User]:
     """
-    This factory function will create authentication dependency for FastAPI,
+    This factory function will create an authentication dependency for FastAPI,
     and will ensure the user has the right permissions if specified.
     """
 
-    def check_perm(user: User = Depends(FronteggHTTPAuthentication(auto_error=auto_error, roles=roles, permissions=permissions))):
+    def check_perm(user: User = Depends(FronteggHTTPAuthentication(auto_error=auto_error, roles=roles, permissions=permissions))) -> User:
         return user
 
     return check_perm
 
-
-def get_auth_header(req):
+def get_auth_header(req: Request) -> Optional[Dict[str, Any]]:
     token = req.headers.get('Authorization')
     if token is not None:
         return {'token': token.replace('Bearer ', ''), 'type': AuthHeaderType.JWT.value}
