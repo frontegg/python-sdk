@@ -27,16 +27,16 @@ class User(BaseModel):
     access_token: str
 
     # User token fields - all fields must be optional to support API tokens
-    metadata: Optional[Dict[str, Any]]
-    name: Optional[str]
-    email: Optional[str]
-    email_verified: Optional[bool]
+    metadata: Optional[Dict[str, Any]] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    email_verified: Optional[bool] = None
     tenant_ids: Optional[List[str]] = Field(alias='tenantIds', default_factory=list)
-    profile_picture_url: Optional[str] = Field(alias='profilePictureUrl')
-    super_user: Optional[bool] = Field(alias='superUser')
+    profile_picture_url: Optional[str] = Field(None, alias='profilePictureUrl')
+    super_user: Optional[bool] = Field(None, alias='superUser')
 
     # API Token fields - all fields must be optional to support user tokens
-    created_by_user_id: Optional[str] = Field(alias='createdByUserId')
+    created_by_user_id: Optional[str] = Field(None, alias='createdByUserId')
 
     def has_permissions(self, permissions: List[str]) -> bool:
         return bool(permissions) and all(p in self.permissions for p in permissions)
