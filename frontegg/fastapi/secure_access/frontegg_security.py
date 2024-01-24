@@ -83,7 +83,7 @@ class FronteggHTTPAuthentication(SecurityBase):
             if auth_header is None:
                 raise HTTPException(status_code=401, detail="Unauthenticated")
 
-            decoded_user = frontegg.fastapi.frontegg.validate_identity_on_token(
+            decoded_user = await frontegg.fastapi.frontegg.validate_identity_on_token(
                 auth_header.get('token'),
                 {'roles': self.roles, 'permissions': self.permissions},
                 auth_header.get('type')
