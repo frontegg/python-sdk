@@ -19,7 +19,7 @@ readme = "README-PYPI.rst"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-flask = { version = "^1.0", optional = true }
+flask = { version = "^2.0", optional = true }
 fastapi = { version = "*", optional = true }
 requests = "^2.28.2"
 arrow = "^1.2.3"
