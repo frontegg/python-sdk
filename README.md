@@ -25,7 +25,8 @@
 
 ## Breaking Changes
 
-### As of version 2.0.0 , we will no longer provide proxy middlewares
+* ### As of version 2.0.0 , we will no longer provide proxy middlewares.
+* ### As of version 3.0.0, Python 3.7 is no longer supported.
 
 ---
 

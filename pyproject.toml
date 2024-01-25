@@ -18,8 +18,8 @@ authors = ["Frontegg LTD <hello@frontegg.com>"]
 readme = "README-PYPI.rst"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-flask = { version = "^1.0", optional = true }
+python = "^3.8"
+flask = { version = "^2.0", optional = true }
 fastapi = { version = "*", optional = true }
 requests = "^2.28.2"
 arrow = "^1.2.3"
@@ -27,6 +27,7 @@ aiohttp = {version = "^3.6.2", optional = true}
 PyJWT = "^2.6.0"
 cryptography = "^41.0.6"
 typing-extensions = "^4.4.0"
+httpx = "^0.26.0"
 
 [tool.poetry.extras]
 flask = ["flask"]
