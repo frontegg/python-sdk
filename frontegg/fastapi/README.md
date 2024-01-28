@@ -27,18 +27,37 @@
 With a few lines of code you can have frontegg up and running
 
 Import and initialize Frontegg along with your FastApi Application
+```python
+# Version <= 2.x
+from frontegg.fastapi import frontegg
+from fastapi import FastAPI
+import uvicorn
 
-    from frontegg.fastapi import frontegg
-    from fastapi import FastAPI
-    import uvicorn
+fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
+fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
 
-    fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
-    fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
-    
-    frontegg.init_app(fe_client_id, fe_api_key)
+frontegg.init_app(fe_client_id, fe_api_key)
 
-    app = FastAPI()
-	uvicorn.run(app)
+app = FastAPI()
+uvicorn.run(app)
+```
+
+```python
+# Version >= 3.x
+from frontegg.fastapi import frontegg
+from fastapi import FastAPI
+import uvicorn
+
+fe_client_id = 'REPLACE_WITH_FRONTEGG_CLIENT_ID'
+fe_api_key = 'REPLACE_WITH_FRONTEGG_API_KEY'
+
+async def startup_event():
+    await frontegg.init_app(client_id=client_id, api_key=api_key)
+
+app = FastAPI()
+app.add_event_handler("startup", startup_event)
+uvicorn.run(app)
+```
 
 Great! Now you have frontegg up and running. 
 
@@ -46,12 +65,13 @@ Great! Now you have frontegg up and running.
 
 ### Protecting routes
 When using Frontegg secure access. You get the ability to protect your routes using Frontegg authentication middleware:
-
-    from frontegg.fastapi.secure_access import FronteggSecurity, User
+```python
+from frontegg.fastapi.secure_access import FronteggSecurity, User
     
-    @app.get("/protected")  
-	def protected(user: User = Depends(FronteggSecurity(permissions=['my-permission']))) -> User:  
-	    return user
+@app.get("/protected")  
+def protected(user: User = Depends(FronteggSecurity(permissions=['my-permission']))) -> User:  
+    return user
+```
 
 The function FronteggSecurity get the optional argument *permission_keys* to specify which permissions are required in order to access the route.
 
@@ -65,47 +85,53 @@ By default access tokens will be cached locally, however you can use one other k
 #### Use redis as your cache
 When initializing your context, pass an access tokens options object with your redis parameters
 
-    access_tokens_options = {
-      cache: {
-        type: 'redis',
-        options: {
-          host: 'localhost',
-          port: 6379,
-          password: '',
-          db: 10,
-        },
-      },
-    };
-    
-    frontegg.init_app(fe_client_id, fe_api_key, options)
+```python
+access_tokens_options = {
+  cache: {
+    type: 'redis',
+    options: {
+      host: 'localhost',
+      port: 6379,
+      password: '',
+      db: 10,
+    },
+  },
+};
+
+frontegg.init_app(fe_client_id, fe_api_key, options)
+```
 
 
 ## CORS (Cross-origin resource sharing)
 In order to use Frontegg, it is required that your app will know how to handle CORS.
 It's easy to set up:
 
-    from fastapi.middleware.cors import CORSMiddleware
-    
-    origins = [
-        "http://localhost:3000",
-    ]
-    
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
 
 ## Working with the REST API
 Frontegg provides a comprehensive REST API for your application. 
 In order to use the API from your backend it is required to initialize the http client using your credentials
 
-    // define your base url
-    base_url = "https://api.frontegg.com/audits"
-    http_client = HttpClient(client_id=<YOUR_CLIENT_ID>, api_key=<YOUR_API_KEY>, base_url=base_url)
-
+```python
+# define your base url
+base_url = "https://api.frontegg.com/audits"
+http_client = HttpClient(client_id=<YOUR_CLIENT_ID>, api_key=<YOUR_API_KEY>, base_url=base_url)
+```
+ 
 The http client instance can now be used to make API requests to Frontegg's REST API (base on the provided base url)
 
 ## Using Frontegg clients
@@ -114,12 +140,15 @@ Frontegg provides various clients for seamless integration with the Frontegg API
 For example, Frontegg’s Managed Audit Logs feature allows you to embed an end-to-end working feature in just 5 lines of code
 
 ### creating a new Audits client
+```python
+from frontegg.common.clients import AuditsClient, HttpClient, Severity
 
-    from frontegg.common.clients import AuditsClient, HttpClient, Severity
-
-    http_client = HttpClient(client_id=<YOUR_CLIENT_ID>, api_key=<YOUR_API_KEY>, base_url=frontegg_urls.audits_service['base_url'])
-    audits_client = AuditsClient(http_client)
+http_client = HttpClient(client_id=<YOUR_CLIENT_ID>, api_key=<YOUR_API_KEY>, base_url=frontegg_urls.audits_service['base_url'])
+audits_client = AuditsClient(http_client)
+```
 
 ## Sending an audit using the newly created client
-
-    audits_client.send_audit(audit={'severity': Severity.INFO}, tenant_id="tenant-id")
+```python
+audits_client.send_audit(audit={'severity': Severity.INFO}, tenant_id="tenant-id")
+```
+   
