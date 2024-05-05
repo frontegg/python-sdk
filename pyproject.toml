@@ -27,7 +27,7 @@ aiohttp = {version = "^3.6.2", optional = true}
 PyJWT = "^2.6.0"
 cryptography = ">=42.0.5"
 typing-extensions = "^4.4.0"
-httpx = "^0.26.0"
+httpx = ">=0.26.0"
 
 [tool.poetry.extras]
 flask = ["flask"]
