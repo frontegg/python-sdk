@@ -43,7 +43,7 @@ autopep8 = "^1.4.4"
 pydocstyle = "^5.0.2"
 
 [tool.poetry.group.dev.dependencies]
-flask-cors = "^3.0.10"
+flask-cors = ">=3.0.10,<5.0.0"
 uvicorn = "^0.18.3"
 
 
