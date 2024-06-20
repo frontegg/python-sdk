@@ -41,7 +41,7 @@ pip install frontegg
 ## Singing Up To Frontegg
 Before you can start with frontegg, please make sure to [sign up](https://portal.frontegg.com/signup) in order to get your free account.
 
-After you signed up, you will be able to get your client ID and API key [here.](https://portal.frontegg.com/administration)
+After you signed up, you will be able to get your client ID and API key [here.](https://portal.frontegg.com/#/admin-box/)
   
   
 ## Supported Liberies
