@@ -4,14 +4,9 @@ from typing import Dict
 
 
 class FronteggUrls:
-    __base_url = os.environ.get('FRONTEGG_API_GATEWAY_URL', 'https://api.frontegg.com/')
 
     def __init__(self):
-        self.__authentication_base_url = os.environ.get('FRONTEGG_AUTHENTICATION_SERVICE_URL',
-                                                        urljoin(self.base_url, 'auth/'))
-        self.__audits_base_url = os.environ.get('FRONTEGG_AUDITS_SERVICE_URL',
-                                                urljoin(self.base_url, 'audits/'))
-        self.__metadata_base_url = os.environ.get('FRONTEGG_METADATA_SERVICE_URL', urljoin(self.base_url, 'metadata/'))
+        self.__base_url = os.environ.get('FRONTEGG_HOSTED_LOGIN_URL', 'https://api.frontegg.com/')
         self.__identity_base_url = os.environ.get('FRONTEGG_IDENTITY_SERVICE_URL', urljoin(self.base_url, 'identity/'))
 
     @property
@@ -23,22 +18,15 @@ class FronteggUrls:
     @property
     def authentication_service(self) -> Dict[str, str]:
         return {
-            'base_url': self.__authentication_base_url,
-            'authenticate_vendor': urljoin(self.__authentication_base_url, 'vendor/')
-        }
-
-    @property
-    def audits_service(self) -> Dict[str, str]:
-        return {
-            'base_url': self.__audits_base_url,
-            'send_audits': ''
+            'authenticate': urljoin(self.__identity_base_url, 'resources/auth/v2/api-token'),
+            'refresh_token': urljoin(self.__identity_base_url, 'resources/auth/v1/api-token/token/refresh')
         }
 
     @property
     def identity_service(self) -> Dict[str, str]:
         return {
             'base_url': self.__identity_base_url,
-            'vendor_config': urljoin(self.__identity_base_url, 'resources/configurations/v1/')
+            'vendor_config': urljoin(self.__identity_base_url, 'resources/configurations/v1')
         }
 
 

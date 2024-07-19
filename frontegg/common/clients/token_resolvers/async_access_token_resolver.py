@@ -1,9 +1,9 @@
 from typing import Optional, List
 
-from frontegg.common import FronteggAsyncAuthenticator
+from frontegg.common.frontegg_async_authenticator import FronteggAsyncAuthenticator
 from frontegg.common.cache.local_cache_manager import LocalCacheManager
 from frontegg.common.cache.redis_cache_manager import RedisCacheManager
-from frontegg.common.clients import HttpAsyncClient
+from frontegg.common.clients.async_http_client import HttpAsyncClient
 from frontegg.common.clients.token_resolvers.access_token_services.cache_services.async_impl.async_cache_tenant_access_token_service import \
     CacheTenantAccessTokenAsyncService
 from frontegg.common.clients.token_resolvers.access_token_services.cache_services.async_impl.async_cache_user_access_token_service import \
@@ -31,6 +31,7 @@ class AccessTokenAsyncResolver(TokenResolver[IEntityWithRoles]):
             public_key: str,
             options: Optional[IValidateTokenOptions] = None
     ) -> IEntityWithRoles:
+        
         entity = super().verify_token(token, public_key)
         entity_with_roles = {}
 
@@ -40,6 +41,7 @@ class AccessTokenAsyncResolver(TokenResolver[IEntityWithRoles]):
             self.validate_roles_and_permissions(entity_with_roles, options)
         else:
             active_ids = await self.__get_active_access_token_ids(entity)
+
             if active_ids is None or entity.get('sub') not in active_ids:
                 raise UnauthenticatedException()
 

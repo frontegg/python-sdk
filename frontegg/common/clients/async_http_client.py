@@ -3,7 +3,7 @@ from typing import Optional
 from httpx import AsyncClient, Response
 from urllib.parse import urljoin
 
-from frontegg.common import FronteggAsyncAuthenticator
+from frontegg.common.frontegg_async_authenticator import FronteggAsyncAuthenticator
 
 timeout_in_seconds = float(os.environ.get('FRONTEGG_HTTP_TIMEOUT_IN_SECONDS') or '3')
 
@@ -40,8 +40,8 @@ class HttpAsyncClient(FronteggAsyncAuthenticator):
         instance = await cls.create()
 
     async def __prepare_auth_headers(self):
-        if self.should_refresh_vendor_token:
-            await self.refresh_vendor_token()
+        if self.should_refresh_token:
+            await self.refresh_token()
 
         self.client.headers['x-access-token'] = self.access_token
 

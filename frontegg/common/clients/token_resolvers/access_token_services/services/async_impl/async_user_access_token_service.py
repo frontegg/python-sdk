@@ -1,6 +1,6 @@
 from typing import List
 
-from frontegg.common.clients import HttpAsyncClient
+from frontegg.common.clients.async_http_client import HttpAsyncClient
 from frontegg.common.clients.token_resolvers.access_token_services.services.async_impl.async_access_token_service import \
     AccessTokenAsyncService
 from frontegg.common.clients.types import IEntityWithRoles, TokenTypes, IUserAccessToken
