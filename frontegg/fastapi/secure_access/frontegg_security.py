@@ -22,6 +22,7 @@ class User(BaseModel):
     roles: List[str] = Field(default_factory=list)
     permissions: List[str] = Field(default_factory=list)
     tenant_id: str = Field(alias='tenantId')
+    application_id: str = Field(alias='applicationId')
 
     token_type: TokenType = Field(alias='type')
     access_token: str
