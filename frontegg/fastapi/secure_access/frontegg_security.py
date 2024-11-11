@@ -21,6 +21,7 @@ class User(BaseModel):
     sub: str
     roles: List[str] = Field(default_factory=list)
     permissions: List[str] = Field(default_factory=list)
+    custom_claims: Dict[str, Any] | None = Field(default=None, alias="customClaims")
     tenant_id: str = Field(alias='tenantId')
     application_id: str = Field(alias='applicationId')
 
