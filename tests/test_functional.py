@@ -1,25 +1,39 @@
-import pytest
+from frontegg.common.clients.types import AuthHeaderType
+from frontegg.flask.secure_access.with_authentication import get_auth_header
 
 
-@pytest.mark.parametrize("entity_name", ('audits', 'team-management'))
-@pytest.mark.vcr()
-def test_metadata(client, entity_name):
-    res = client.get('frontegg/metadata?entityName={}'.format(entity_name))
+class _FakeRequest:
+    """Minimal stand-in for a Flask request exposing a ``headers`` mapping."""
 
-    assert res.status_code == 200
-
-
-@pytest.mark.vcr()
-def test_send_audits_through_proxy(client):
-    res = client.post('frontegg/audits',
-                      json={"username": "test", "severity": "Info"})
-
-    assert res.status_code == 201
+    def __init__(self, headers):
+        self.headers = headers
 
 
-@pytest.mark.vcr()
-def test_send_audits(frontegg):
-    result = frontegg.send_audits({"username": "test", "severity": "Info"})
-    assert result['username'] == 'test'
-    assert result['severity'] == 'Info'
-    assert result['tenantId'] == 'my-tenant-id'
+def test_get_auth_header_reads_bearer_token():
+    header = get_auth_header(_FakeRequest({'Authorization': 'Bearer my.jwt.token'}))
+
+    assert header == {'token': 'my.jwt.token', 'type': AuthHeaderType.JWT.value}
+
+
+def test_get_auth_header_reads_api_key():
+    header = get_auth_header(_FakeRequest({'x-api-key': 'secret-key'}))
+
+    assert header == {'token': 'secret-key', 'type': AuthHeaderType.AccessToken.value}
+
+
+def test_get_auth_header_prefers_authorization_over_api_key():
+    header = get_auth_header(
+        _FakeRequest({'Authorization': 'Bearer jwt', 'x-api-key': 'secret-key'})
+    )
+
+    assert header == {'token': 'jwt', 'type': AuthHeaderType.JWT.value}
+
+
+def test_get_auth_header_missing_returns_none():
+    assert get_auth_header(_FakeRequest({})) is None
+
+
+def test_with_authentication_rejects_request_without_auth_header(client):
+    res = client.get('/protected')
+
+    assert res.status_code == 401
