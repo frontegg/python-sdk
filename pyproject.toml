@@ -44,6 +44,7 @@ pydocstyle = "^6.3.0"
 [tool.poetry.group.dev.dependencies]
 flask-cors = "^6.0.0"
 uvicorn = "^0.34.0"
+fakeredis = "^2.20.0"
 
 
 [tool.poetry.group.extras.dependencies]
