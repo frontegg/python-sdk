@@ -19,6 +19,7 @@
     <li><a href="#breaking-changes">Breaking Changes</a></li>
     <li><a href="#installation">Installation</a></li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#security">Security</a></li>
 </ul>
 
 <br/>
@@ -27,6 +28,7 @@
 
 * ### As of version 2.0.0 , we will no longer provide proxy middlewares.
 * ### As of version 3.0.0, Python 3.7 is no longer supported.
+* ### As of version 4.0.0, Python 3.8 and 3.9 are no longer supported and Python 3.10+ is required.
 
 ---
 
@@ -66,3 +68,17 @@ import logging
   
 frontegg_logger.setLevel(logging.DEBUG)  
 ```
+
+## <a name="security"></a>Security
+
+The `frontegg` Python SDK is actively maintained, and its dependencies are kept on current, patched versions. Minimum versions of security-sensitive dependencies (`requests`, `cryptography`, `aiohttp`, `PyJWT`, ...) are pinned in `pyproject.toml` so that installs resolve to patched releases.
+
+To keep your application protected, always use the latest release:
+
+```
+pip install --upgrade frontegg
+```
+
+### Reporting a vulnerability
+
+If you discover a security vulnerability in this SDK, please report it responsibly by emailing **security@frontegg.com**. Please do not open a public GitHub issue for security reports.
