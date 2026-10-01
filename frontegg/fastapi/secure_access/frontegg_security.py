@@ -96,6 +96,10 @@ class FronteggHTTPAuthentication(SecurityBase):
             logger.info('entity does not have required role and permissions')
             raise HTTPException(status_code=403, detail='You do not have permission to perform this action.')
 
+        except HTTPException as e:
+            logger.info('request did not carry valid credentials, ' + str(e))
+            return self.handle_authentication_failure()
+
         except Exception as e:
             logger.error('something went wrong while validating JWT, ' + str(e))
             return self.handle_authentication_failure()

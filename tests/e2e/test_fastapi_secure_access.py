@@ -5,6 +5,7 @@ fake vendor session + real RSA keys. Exercises protected endpoints via
 FastAPI's ``TestClient`` (which runs the async handlers synchronously).
 """
 import asyncio
+import logging
 
 import pytest
 from fastapi import Depends, FastAPI
@@ -94,3 +95,25 @@ class TestFastAPISecureAccess:
             "/needs-write", headers={"Authorization": "Bearer " + token}
         )
         assert r.status_code == 200
+
+    def test_missing_auth_is_not_logged_as_error(self, client, caplog):
+        with caplog.at_level(logging.DEBUG, logger="Frontegg"):
+            assert client.get("/me").status_code == 401
+
+        assert [r.message for r in caplog.records if r.levelno >= logging.ERROR] == []
+        assert any(
+            "did not carry valid credentials" in r.message
+            and r.levelno == logging.INFO
+            for r in caplog.records
+        )
+
+    def test_real_validation_failure_is_still_logged_as_error(self, client, caplog):
+        with caplog.at_level(logging.DEBUG, logger="Frontegg"):
+            r = client.get("/me", headers={"Authorization": "Bearer garbage"})
+            assert r.status_code == 401
+
+        assert any(
+            "something went wrong while validating JWT" in r.message
+            and r.levelno == logging.ERROR
+            for r in caplog.records
+        )
