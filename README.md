@@ -54,6 +54,28 @@ Frontegg Slack SDK support the following frameworks:
   
 *If you could not find the library you are looking for here, please [contact us](https://frontegg.com/contact) and let us know :)*  
   
+## Fetching audit logs (v2)
+
+```python
+from frontegg.common.clients import AuditsClient, HttpClient
+from frontegg.helpers.frontegg_urls import frontegg_urls
+
+http = HttpClient(client_id, api_key, frontegg_urls.audits_service['base_url'])
+audits = AuditsClient(http)
+page = audits.get_audits_v2(
+    tenant_id="tenant-id", count=200, offset=0,
+    created_from="2026-11-01T00:00:00Z",
+    users=["user-id"], email=["user@example.com"],
+    sort_by="createdAt", sort_direction="desc",
+)
+```
+
+Use your configured client ID and API key for `client_id` and `api_key`.
+Request each page with `count` between 1 and 200 and a nonnegative `offset`.
+Date filters accept ISO 8601 strings; `tenant_ids`, `users`, and `email` accept
+lists. The method returns the API response JSON unchanged and propagates HTTP
+errors. It uses the existing vendor authentication and configured audits URL.
+
 ## Debugging  
 Frontegg use the python 3 built in [loggin libary](https://docs.python.org/3/library/logging.html) to log useful debugging information.  
   
