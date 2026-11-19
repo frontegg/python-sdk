@@ -37,10 +37,11 @@ class IdentityAsyncClientMixin:
             try:
                 self.__publicKey = await self.fetch_public_key()
                 return self.__publicKey
-            except Exception as e:
+            except Exception:
                 reties = reties + 1
                 logger.error(
-                    'could not get public key from frontegg, retry number - ' + str(reties) + ', ' + str(e))
+                    'could not get public key from frontegg, retry number - %s',
+                    reties)
                 await asyncio.sleep(1)
 
         logger.error('failed to get public key in all retries')
@@ -65,7 +66,7 @@ class IdentityAsyncClientMixin:
             try:
                 token = token.replace("Bearer ", "")
             except:
-                logger.error("Failed to extract token - ", token)
+                logger.error("Failed to extract token")
 
         public_key = None
         try:
@@ -89,14 +90,12 @@ class IdentityAsyncClientMixin:
     async def decode_jwt(self, authorization_header, verify: Optional[bool] = True):
         if not authorization_header:
             raise InvalidTokenError('Authorization headers is missing')
-        logger.debug('found authorization header: ' +
-                     str(authorization_header))
+        logger.debug('found authorization header')
         jwt_token = authorization_header.replace('Bearer ', '')
         public_key = await self.get_public_key()
-        logger.debug('got public key' + str(public_key))
+        logger.debug('got public key')
         decoded = self.__get_jwt_data(jwt_token, verify, public_key)
         logger.info('jwt was decoded successfully')
-        logger.debug('JWT value - ' + str(decoded))
         return decoded
 
     @retry(action='decode jwt', total_tries=jwt_decode_retry, retry_delay=jwt_decode_retry_delay)
