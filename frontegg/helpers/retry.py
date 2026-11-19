@@ -13,10 +13,10 @@ def retry(action, total_tries=10, retry_delay=0):
                     return f(*args, **kwargs)
                 except Exception as e:
                     if _tries == 0:
-                        logger.info((action or f'function "{f.__name__}"') + f' failed on first try, {e}')
+                        logger.info((action or f'function "{f.__name__}"') + ' failed on first try')
                     if +_tries >= total_tries - 1:
                         logger.info((action or f'function "{f.__name__}"') +
-                                    f' failed on the last retry attempt ({total_tries}), {e}')
+                                    f' failed on the last retry attempt ({total_tries})')
                         raise e
                     _tries += 1
                     if retry_delay > 0:
