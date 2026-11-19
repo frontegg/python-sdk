@@ -39,7 +39,8 @@ class IdentityClientMixin:
             except Exception:
                 reties = reties + 1
                 logger.error(
-                    'could not get public key from frontegg, retry number - ' + str(reties))
+                    'could not get public key from frontegg, retry number - %s',
+                    reties)
 
         logger.error('failed to get public key in all retries')
 
